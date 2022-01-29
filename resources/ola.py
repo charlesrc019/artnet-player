@@ -32,11 +32,13 @@ class OLAExecutor:
             }
             return resp
 
-    def play(self, details):
+    def play(self, details, is_queue = False):
         if self.status()["status"] != "free":
             raise Exception("Cannot start playback. Another OLA process already running.")
 
         self.active_task = "playing"
+        if is_queue:
+            self.active_task = "playing queue"
         self.active_epoch = time.time()
         self.active_details = details
         

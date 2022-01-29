@@ -14,6 +14,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.gen
 import tornado.options
+import sqlite3
 import logging
 import subprocess
 import sys
@@ -23,14 +24,15 @@ import logging
 import os
 
 # Import subfiles.
-from handlers.configurations import ConfigListHandler, ConfigDetailsHandler
-from handlers.recordings import RecordingListHandler, RecordingDetailsHandler
-from handlers.action import StatusHandler, ActionHandler
+from handlers.recordings import RecordingListHandler, RecordingDetailsHandler, ConfigListHandler, ConfigDetailsHandler
+from handlers.actions import StatusHandler, RecordHandler, PlayHandler, StopHandler
+from handlers.queue import QueueHandler
 from resources.ola import OLAExecutor
+from resources.cache import QueueCache
 
 # Define initial options.
 tornado.options.define("port", help="port where the service can be reached", type=int, default=8080)
-tornado.options.define("directory", help="directory where data is stored", type=str, default=f"{os.path.dirname(os.path.realpath(__file__))}/data")
+tornado.options.define("directory", help="directory where data is stored (no trailing backslash)", type=str, default=f"{os.path.dirname(os.path.realpath(__file__))}/data")
 tornado.options.define("universe", help="ArtNet universe(s) to record (comma-seperated)", type=str, default="0")
 tornado.options.parse_command_line()
 
@@ -44,16 +46,26 @@ def main():
     # Configure logging.
     tornado.log.enable_pretty_logging()
 
-    # Begin OLA connection instance.
-    ola = OLAExecutor()
-
     # Add data directory, if not exists.
     try:
         if not os.path.exists(tornado.options.options.directory):
             os.makedirs(tornado.options.options.directory)
+        if not os.path.exists(f"{tornado.options.options.directory}/metadata.db"):
+            with open(f"{os.path.dirname(os.path.realpath(__file__))}/resources/metadata.sql", 'r') as file:
+                sql_statements = file.read().replace('\n', '').split(";")
+            conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
+            curs = conn.cursor()
+            for sql_statement in sql_statements:
+                curs.execute(sql_statement)
+            conn.commit()
+            conn.close()
     except:
         raise Exception("Unable to access data folder.")
-    
+
+    # Begin resource instances.
+    ola = OLAExecutor()
+    cache = QueueCache()
+
     # Define routes and behaviors.
     application = tornado.web.Application(
         [
@@ -61,8 +73,19 @@ def main():
             (r'/api/configurations', ConfigListHandler),
             (r'/api/recordings/(.*)', RecordingDetailsHandler),
             (r'/api/recordings', RecordingListHandler),
-            (r'/api/action', ActionHandler, {"ola": ola}),
-            (r'/status', StatusHandler, {"ola": ola})
+            (r'/api/queue', QueueHandler, {"ola": ola, "cache": cache}),
+            (r'/api/record', RecordHandler, {"ola": ola}),
+            (r'/api/play', PlayHandler, {"ola": ola}),
+            (r'/api/stop', StopHandler, {"ola": ola}),
+            (r'/api/status', StatusHandler, {"ola": ola}),
+            (
+                r'/(.*)',
+                tornado.web.StaticFileHandler,
+                {
+                    "path": f"{os.path.dirname(os.path.realpath(__file__))}/static",
+                    "default_filename":"index.html"
+                }
+            )
         ],
         debug=True
     )
