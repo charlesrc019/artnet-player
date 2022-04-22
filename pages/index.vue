@@ -39,7 +39,7 @@ export default {
   mounted () {
   axios
     //.get("http://" + window.location.hostname + ":" + window.location.port + "/recordings")
-    .get("http://10.0.0.5/recordings")
+    .get("http://10.0.0.5/api/recordings")
     .then(response => {
       this.recordings = response
     })

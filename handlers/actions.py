@@ -50,7 +50,6 @@ class RecordHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
 
     async def options(self, *args):
         self.set_status(204)
@@ -131,7 +130,6 @@ class PlayHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
 
     async def options(self, *args):
         self.set_status(204)
@@ -208,7 +206,6 @@ class StopHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
 
     async def options(self, *args):
         self.set_status(204)
@@ -260,7 +257,7 @@ class StopHandler(tornado.web.RequestHandler):
 
             # Report error.
             if not is_valid:
-                raise tornado.web.HTTPError(500, "Internal recording error.")
+                raise tornado.web.HTTPError(500, "No data recorded.")
 
 
         self.set_status(status_code=202)

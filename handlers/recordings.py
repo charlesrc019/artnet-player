@@ -11,7 +11,6 @@ class RecordingListHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
 
     async def options(self, *args):
         self.set_status(204)
@@ -91,7 +90,6 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
 
     async def options(self, *args):
         self.set_status(204)
