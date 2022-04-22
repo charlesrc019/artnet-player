@@ -50,6 +50,11 @@ class RecordHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "*, content-type, authorization, x-requested-with, x-xsrftoken, x-csrftoken")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT, PATCH')
+        self.set_header('Access-Control-Expose-Headers', 'content-type, location, *, set-cookie')
+        self.set_header('Access-Control-Request-Headers', '*')
+        self.set_header('Access-Control-Allow-Credentials', 'true')
 
     async def options(self, *args):
         self.set_status(204)
@@ -130,6 +135,11 @@ class PlayHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "*, content-type, authorization, x-requested-with, x-xsrftoken, x-csrftoken")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT, PATCH')
+        self.set_header('Access-Control-Expose-Headers', 'content-type, location, *, set-cookie')
+        self.set_header('Access-Control-Request-Headers', '*')
+        self.set_header('Access-Control-Allow-Credentials', 'true')
 
     async def options(self, *args):
         self.set_status(204)
@@ -206,6 +216,11 @@ class StopHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "*, content-type, authorization, x-requested-with, x-xsrftoken, x-csrftoken")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PUT, PATCH')
+        self.set_header('Access-Control-Expose-Headers', 'content-type, location, *, set-cookie')
+        self.set_header('Access-Control-Request-Headers', '*')
+        self.set_header('Access-Control-Allow-Credentials', 'true')
 
     async def options(self, *args):
         self.set_status(204)
