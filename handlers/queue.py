@@ -10,6 +10,14 @@ class QueueListHandler(tornado.web.RequestHandler):
     def initialize(self, queue):
         self.queue = queue
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
     async def get(self):
 
         # Fetch from database.
@@ -176,6 +184,14 @@ class QueueDetailsHandler(tornado.web.RequestHandler):
 
     def initialize(self, queue):
         self.queue = queue
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
 
     async def get(self, position):
         raise tornado.web.HTTPError(400, "Only PUT and DELETE requests accepted on this endpoint.")
