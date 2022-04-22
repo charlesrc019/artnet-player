@@ -7,7 +7,7 @@ import concurrent
 import time
 import os
 
-class OLAExecutor:
+class OLA:
 
     def __init__(self):
         self.__executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
@@ -32,17 +32,16 @@ class OLAExecutor:
             }
             return resp
 
-    def play(self, details, is_queue = False):
-        if self.status()["status"] != "free":
-            raise Exception("Cannot start playback. Another OLA process already running.")
+    def play(self, details, from_queue = False):
+        if self.status()["status"] == "recording":
+            raise Exception("Cannot start playback. A recording is already running.")
 
         self.active_task = "playing"
-        if is_queue:
+        if from_queue:
             self.active_task = "playing queue"
         self.active_epoch = time.time()
         self.active_details = details
         
-
         cmd = f"ola_recorder -p {tornado.options.options.directory}/{details['configuration']}/{details['identifier']}.ola"
         logging.info(f"PLAY {details['identifier']}")
         self.__executor.submit(subprocess.run, cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -50,12 +49,11 @@ class OLAExecutor:
 
     def record(self, details):
         if self.status()["status"] != "free":
-            raise Exception("Cannot start playback. Another OLA process already running.")
+            raise Exception("Cannot start recording. Another progress already running.")
 
         self.active_task = "recording"
         self.active_epoch = time.time()
         self.active_details = details
-        
 
         cmd = f"ola_recorder -r {tornado.options.options.directory}/{details['configuration']}/{details['identifier']}.ola -u {tornado.options.options.universe}"
         logging.info(f"RECORD {details['identifier']}")

@@ -5,68 +5,16 @@ import sqlite3
 import re
 import json
 
-class QueueHandler(tornado.web.RequestHandler):
-    
+class QueueListHandler(tornado.web.RequestHandler):
 
-    def initialize(self, ola, cache):
-        self.ola = ola
-        self.cache = cache
-        if not self.cache.watchdog_running:
-            tornado.ioloop.PeriodicCallback(self.watchdog, 100).start()
-            self.cache.watchdog_running = True
-
-    def watchdog(self):
-        if self.cache.active:
-            if self.ola.status()["status"] == "free":
-                try:
-                    curs = self.cache.conn.cursor()
-
-                    # Check if looped.
-                    curs.execute("select IS_LOOPED from QUEUE where POSITION = 0;")
-                    tmp = curs.fetchone()
-                    is_looped = False
-                    if tmp is not None:
-                        is_looped = bool(int(tmp[0]))
-
-                    # Move forward if not looped.
-                    if not is_looped:
-                        curs.execute("delete from QUEUE where POSITION = 0;")
-                        curs.execute("select count(*) from QUEUE;")
-                        tmp = curs.fetchone()
-                        if (tmp is None) or (int(tmp[0]) == 0): # special case to turn off watchdog if empty
-                            self.cache.active = False
-                            return
-                        curs.execute("select * from QUEUE;")
-
-                        while (True):
-                            curs.execute("update QUEUE set POSITION = POSITION - 1;")
-                            curs.execute("select NAME, UUID, CONFIGURATION_NAME, SECONDS from QUEUE where POSITION = 0;")
-                            tmp = curs.fetchone()
-                            if tmp is not None:
-                                break
-
-                    # Loop if enabled.
-                    else:
-                        curs.execute("select NAME, UUID, CONFIGURATION_NAME, SECONDS from QUEUE where POSITION = 0;")
-                        tmp = curs.fetchone()
-
-                    curs.close()
-                except:
-                    raise Exception("Internal database error.")
-
-                details = {
-                    "name": tmp[0],
-                    "identifier": tmp[1],
-                    "configuration": tmp[2],
-                    "total_secs": tmp[3]
-                }
-                self.ola.play(details, is_queue=True)
+    def initialize(self, queue):
+        self.queue = queue
 
     async def get(self):
 
         # Fetch from database.
         try:
-            curs = self.cache.conn.cursor()
+            curs = self.queue.conn.cursor()
             curs.execute(
                 """
                     select 
@@ -99,7 +47,7 @@ class QueueHandler(tornado.web.RequestHandler):
             }
             items.append(tmp)
         resp = {
-            "active": self.cache.active,
+            "active": self.queue.active,
             "items": items
         }
 
@@ -153,7 +101,7 @@ class QueueHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(500, "Internal database error.")
 
         try:
-            curs = self.cache.conn.cursor()
+            curs = self.queue.conn.cursor()
 
             # If marked as next, shuffle and add next.
             if is_next:
@@ -184,9 +132,7 @@ class QueueHandler(tornado.web.RequestHandler):
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
 
-
-        # Automatically activate queue, if song is added to it.
-        self.cache.active = True
+        self.queue.active = True
 
         self.set_status(status_code=202)
         self.finish()
@@ -199,9 +145,46 @@ class QueueHandler(tornado.web.RequestHandler):
             pattern = re.compile(r"^(true|false)$")
             if (new_status != "") and (not pattern.match(new_status)):
                 raise Exception()
-            position = self.get_argument("pos", -1)
-            if (position != -1):
-                position = int(position)
+            skip = self.get_argument("skip", "")
+            if (skip != "") and (skip != "true"):
+                raise Exception()
+            if (new_status == "") and (skip == ""):
+                raise Exception()
+        except:
+            raise tornado.web.HTTPError(400, "Invalid parameters.")
+
+        # Set status.
+        if new_status == "true":
+            self.queue.active = True
+        elif new_status == "false":
+            if not self.queue.active: # remove top item from queue if we are deactivating
+                try:
+                    curs.execute("delete from QUEUE where POSITION = 0;")
+                    self.queue.conn.commit()
+                except:
+                    raise tornado.web.HTTPError(500, "Internal database error.")
+            self.queue.active = False
+
+        # Initiate skip.
+        if skip == "true":
+            self.queue.skip = True
+
+        self.set_status(status_code=202)
+        self.finish()
+
+class QueueDetailsHandler(tornado.web.RequestHandler):
+
+    def initialize(self, queue):
+        self.queue = queue
+
+    async def get(self, position):
+        raise tornado.web.HTTPError(400, "Only PUT and DELETE requests accepted on this endpoint.")
+
+    async def put(self, position):
+
+        # Fetch query parameters.
+        try:
+            position = int(position)
             move = self.get_argument("position", "")
             pattern = re.compile(r"^(next|up)$")
             if (move != "") and (not pattern.match(move)):
@@ -210,27 +193,14 @@ class QueueHandler(tornado.web.RequestHandler):
             pattern = re.compile(r"^(true|false)$")
             if (loop != "") and (not pattern.match(loop)):
                 raise Exception()
-            if (move == "") and (loop == "") and (new_status == ""):
-                raise Exception()
-            if ((move != "") or (loop != "")) and (position == -1):
+            if (move == "") and (loop == ""):
                 raise Exception()
         except:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
-        # Set status.
-        if new_status == "true":
-            self.cache.active = True
-        elif new_status == "false":
-            self.cache.active = False
-            try:
-                curs.execute("delete from QUEUE where POSITION = 0;")
-                self.cache.conn.commit()
-            except:
-                raise tornado.web.HTTPError(500, "Internal database error.")
-
         # Update queue items.
         try:
-            curs = self.cache.conn.cursor()
+            curs = self.queue.conn.cursor()
 
             # Verify that recording exists on the queue.
             curs.execute("select * from QUEUE where POSITION = ?;", (position,))
@@ -272,16 +242,16 @@ class QueueHandler(tornado.web.RequestHandler):
         self.set_status(status_code=202)
         self.finish()
 
-    async def delete(self):
+    async def delete(self, position):
 
         # Extract identifying information.
         try:
-            position = int(self.get_argument("pos"))
+            position = int(position)
         except:
-            raise tornado.web.HTTPError(400, "Invalid item.")
+            raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         try:
-            curs = self.cache.conn.cursor()
+            curs = self.queue.conn.cursor()
 
             # Verify that recording exists on the queue.
             curs.execute("select * from QUEUE where POSITION = ?;", (position,))

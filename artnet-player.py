@@ -24,11 +24,12 @@ import logging
 import os
 
 # Import subfiles.
-from handlers.recordings import RecordingListHandler, RecordingDetailsHandler, ConfigListHandler, ConfigDetailsHandler
+from handlers.configurations import ConfigListHandler, ConfigDetailsHandler
+from handlers.recordings import RecordingListHandler, RecordingDetailsHandler
 from handlers.actions import StatusHandler, RecordHandler, PlayHandler, StopHandler
-from handlers.queue import QueueHandler
-from resources.ola import OLAExecutor
-from resources.cache import QueueCache
+from handlers.queue import QueueListHandler, QueueDetailsHandler
+from resources.ola import OLA
+from resources.queue import Queue
 
 # Define initial options.
 tornado.options.define("port", help="port where the service can be reached", type=int, default=8080)
@@ -63,8 +64,8 @@ def main():
         raise Exception("Unable to access data folder.")
 
     # Begin resource instances.
-    ola = OLAExecutor()
-    cache = QueueCache()
+    ola = OLA()
+    queue = Queue(ola)
 
     # Define routes and behaviors.
     application = tornado.web.Application(
@@ -73,7 +74,8 @@ def main():
             (r'/api/configurations', ConfigListHandler),
             (r'/api/recordings/(.*)', RecordingDetailsHandler),
             (r'/api/recordings', RecordingListHandler),
-            (r'/api/queue', QueueHandler, {"ola": ola, "cache": cache}),
+            (r'/api/queue/(.*)', QueueDetailsHandler, {"queue": queue}),
+            (r'/api/queue', QueueListHandler, {"queue": queue}),
             (r'/api/record', RecordHandler, {"ola": ola}),
             (r'/api/play', PlayHandler, {"ola": ola}),
             (r'/api/stop', StopHandler, {"ola": ola}),
