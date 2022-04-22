@@ -9,6 +9,14 @@ import shutil
 
 class RecordingListHandler(tornado.web.RequestHandler):
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
     async def get(self):
 
         # Fetch query parameters.
@@ -80,6 +88,14 @@ class RecordingListHandler(tornado.web.RequestHandler):
         self.finish(json.dumps(resp))
 
 class RecordingDetailsHandler(tornado.web.RequestHandler):
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
 
     async def get(self, identifier):
         raise tornado.web.HTTPError(400, "Only PUT and DELETE requests accepted on this endpoint.")
@@ -179,6 +195,14 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
 
 class ConfigListHandler(tornado.web.RequestHandler):
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
     async def get(self):
 
         # Use database connection.
@@ -265,6 +289,14 @@ class ConfigListHandler(tornado.web.RequestHandler):
         self.finish()
 
 class ConfigDetailsHandler(tornado.web.RequestHandler):
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
 
     async def get(self, config):
         raise tornado.web.HTTPError(400, "Only DELETE requests accepted on this endpoint.")

@@ -48,6 +48,14 @@ class RecordHandler(tornado.web.RequestHandler):
     def initialize(self, ola):
         self.ola = ola
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
     async def get(self):
         raise tornado.web.HTTPError(400, "Only POST requests accepted on this endpoint.")
 
@@ -121,6 +129,14 @@ class PlayHandler(tornado.web.RequestHandler):
     def initialize(self, ola):
         self.ola = ola
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
     async def get(self):
         raise tornado.web.HTTPError(400, "Only POST requests accepted on this endpoint.")
 
@@ -189,6 +205,14 @@ class StopHandler(tornado.web.RequestHandler):
 
     def initialize(self, ola):
         self.ola = ola
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
 
     async def get(self):
         raise tornado.web.HTTPError(400, "Only POST requests accepted on this endpoint.")

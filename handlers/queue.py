@@ -6,7 +6,6 @@ import re
 import json
 
 class QueueHandler(tornado.web.RequestHandler):
-    
 
     def initialize(self, ola, cache):
         self.ola = ola
@@ -14,6 +13,14 @@ class QueueHandler(tornado.web.RequestHandler):
         if not self.cache.watchdog_running:
             tornado.ioloop.PeriodicCallback(self.watchdog, 100).start()
             self.cache.watchdog_running = True
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
 
     def watchdog(self):
         if self.cache.active:
