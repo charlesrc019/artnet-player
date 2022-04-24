@@ -143,7 +143,7 @@ class PlayHandler(tornado.web.RequestHandler):
         # Fetch query parameters.
         try:
             identifier = self.get_argument("id")
-            pattern = re.compile(r"^[[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+            pattern = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
             if not pattern.match(identifier):
                 raise Exception()
         except:
