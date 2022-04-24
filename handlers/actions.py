@@ -62,7 +62,7 @@ class RecordHandler(tornado.web.RequestHandler):
 
         # Fetch query parameters.
         try:
-            config = self.get_argument("i")
+            config = self.get_argument("id")
             pattern = re.compile(r"^[A-Za-z0-9-_]+$")
             if not pattern.match(config):
                 raise Exception()

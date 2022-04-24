@@ -1,5 +1,5 @@
 <template>
-  <v-simple-table>
+  <v-simple-table class="mt-4">
     <template v-slot:default>
       <thead>
         <tr>
@@ -18,10 +18,17 @@
         <tr
           v-for="recording in recordings"
           :key="recording.name"
+          @click="startPlayback(recording.identifier)"
         >
           <td>{{ recording.name }}</td>
           <td>{{ recording.configuration }}</td>
-          <td>{{ item.seconds }}</td>
+          <td>
+            {{ 
+              String(Math.floor(recording.seconds / 60)) + 
+              ":" + 
+              (recording.seconds - (Math.floor(recording.seconds / 60) * 60)).toLocaleString('en-US', {minimumIntegerDigits: 2}) 
+            }}
+          </td>
         </tr>
       </tbody>
     </template>
@@ -31,21 +38,30 @@
 <script>
 import axios from 'axios'
 export default {
-  data () {
+  data() {
     return {
       recordings: []
     }
   },
-  mounted () {
-  axios
-    //.get("http://" + window.location.hostname + ":" + window.location.port + "/recordings")
-    .get("http://10.0.0.5/api/recordings")
-    .then(response => {
-      this.recordings = response
-    })
-    .catch(error => {
-      console.log(error)
-    })
+  methods: {
+    startPlayback(identifier) {
+      axios
+        .post("http://10.254.254.3/api/play?id=" + identifier)
+        .then(response => {})
+        .catch(error => {
+          console.log(error)
+        })
+    }
+  },
+  mounted: function() {
+    axios
+      .get("http://10.254.254.3/api/recordings")
+      .then(response => {
+        this.recordings = response.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 }
 </script>

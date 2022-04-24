@@ -61,8 +61,6 @@ class OLA:
         self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
 
     def stop(self):
-        if self.status()["status"] == "free":
-            raise Exception("No OLA process to stop.")
 
         os.system(f"kill $(ps -C ola_recorder -o pid=)") # yeah... kinda janky but couldn't find better way
         logging.info(f"STOP")
