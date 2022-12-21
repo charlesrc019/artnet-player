@@ -46,7 +46,8 @@ export default {
   methods: {
     startPlayback(identifier) {
       axios
-        .post("http://10.254.254.3/api/play?id=" + identifier)
+        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/play?id=" + identifier)
+        .post("http://10.0.0.26:8080/api/play?id=" + identifier)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -55,7 +56,8 @@ export default {
   },
   mounted: function() {
     axios
-      .get("http://10.254.254.3/api/recordings")
+      //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings")
+      .get("http://10.0.0.26:8080/api/recordings")
       .then(response => {
         this.recordings = response.data
       })

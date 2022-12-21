@@ -74,7 +74,8 @@ export default {
   methods: {
     recordPlayback() {
       axios
-        .post("http://10.254.254.3/api/record?id=" + this.selected)
+        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
+        .post("http://10.0.0.26:8080/api/record?id=" + this.selected)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -83,7 +84,8 @@ export default {
   },
   mounted() {
     axios
-      .get("http://10.254.254.3/api/configurations")
+      //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
+      .post("http://10.0.0.26:8080/api/record?id=" + this.selected)
       .then(response => {
         this.configurations = response.data
       })

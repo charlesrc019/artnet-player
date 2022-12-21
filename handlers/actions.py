@@ -17,6 +17,14 @@ class StatusHandler(tornado.websocket.WebSocketHandler):
         self.free_sent = True
         tornado.ioloop.PeriodicCallback(self.status_updater, 1000).start()
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "*")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
     def check_origin(self, origin):
         return True
 
@@ -50,6 +58,7 @@ class RecordHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "*")
 
     async def options(self, *args):
         self.set_status(204)
@@ -130,6 +139,7 @@ class PlayHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "*")
 
     async def options(self, *args):
         self.set_status(204)
@@ -206,6 +216,7 @@ class StopHandler(tornado.web.RequestHandler):
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "*")
 
     async def options(self, *args):
         self.set_status(204)

@@ -92,7 +92,7 @@ export default {
           to: '/queue'
         },
         {
-          icon: 'mdi-circle-outline',
+          icon: 'mdi-plus-circle-outline',
           title: 'Record',
           to: '/record'
         }
@@ -106,7 +106,7 @@ export default {
     stopPlayback() {
       axios
         //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/stop")
-        .post("http://10.254.254.3/api/stop")
+        .post("http://10.0.0.26:8080/api/stop")
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -114,7 +114,8 @@ export default {
     }
   },
   mounted: function() {
-    let socket = new WebSocket("ws://10.254.254.3/api/status")
+    //let socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/api/status")
+    let socket = new WebSocket("ws://10.0.0.26/api/status")
     socket.onopen = (event) => {}
     socket.onmessage = (event) => {
       this.activity = JSON.parse(event.data)
