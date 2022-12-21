@@ -158,7 +158,8 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             conn.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
+        except Exception as e:
+            print(str(e))
             raise tornado.web.HTTPError(500, "Internal database error.")
             
         self.set_status(status_code=202)
