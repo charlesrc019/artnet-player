@@ -117,12 +117,6 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
 
     async def delete(self, config):
 
-        # Remove recording dir.
-        try:
-            shutil.rmtree(f"{tornado.options.options.directory}/{config}")
-        except:
-            raise tornado.web.HTTPError(500, "Internal recording error.")
-
         # Check that it is not in the queue.
         try:
             conn = sqlite3.connect(":memory:")
@@ -156,6 +150,9 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             # Delete sequence.
             curs.execute("delete from RECORDING where CONFIGURATION_ID = ?;", (tmp[0],))
             curs.execute("delete from CONFIGURATION where ID = ?;", (tmp[0],))
+
+            # Remove recording dir.
+            shutil.rmtree(f"{tornado.options.options.directory}/{config}")
 
             conn.commit()
             conn.close()

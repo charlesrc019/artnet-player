@@ -43,7 +43,8 @@
           class="my-2"
           color="secondary"
           large
-          disabled
+          :disabled="selected == null"
+          @click="deleteConfiguration()"
         >
           Remove
         </v-btn>
@@ -80,12 +81,25 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    deleteConfiguration() {
+      if (confirm("All associated recordings will be permanently deleted.\nContinue?")) {
+        axios
+          //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations/" + this.selected)
+          .delete("http://10.0.0.26:8080/api/configurations/" + this.selected)
+          .then(response => {
+            window.location.reload(true)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
     }
   },
   mounted() {
     axios
-      //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
-      .post("http://10.0.0.26:8080/api/record?id=" + this.selected)
+      //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
+      .get("http://10.0.0.26:8080/api/configurations")
       .then(response => {
         this.configurations = response.data
       })
