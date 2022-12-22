@@ -126,10 +126,11 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             curs.execute("select count(*) from QUEUE where CONFIGURATION_NAME = ?;", (config,))
             tmp = curs.fetchone()
             print(str(tmp))
+            print(int(tmp[0]))
             curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
-        if tmp > 0:
+        if int(tmp[0]) > 0:
             raise tornado.web.HTTPError(400, "Cannot delete configuraton while used in the queue.")
 
         # Use database connection.
