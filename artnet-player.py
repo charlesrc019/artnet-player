@@ -26,7 +26,7 @@ import os
 # Import subfiles.
 from handlers.configurations import ConfigListHandler, ConfigDetailsHandler
 from handlers.recordings import RecordingListHandler, RecordingDetailsHandler
-from handlers.actions import StatusHandler, RecordHandler, PlayHandler, StopHandler
+from handlers.actions import StatusHandler, RecordHandler, StopHandler #PlayHandler
 from handlers.queue import QueueListHandler, QueueDetailsHandler
 from resources.ola import OLA
 from resources.queue import Queue
