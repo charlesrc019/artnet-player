@@ -31,7 +31,7 @@ class ConfigListHandler(tornado.web.RequestHandler):
                         CONFIGURATION.NAME,
                         CONFIGURATION.CREATED
                     from CONFIGURATION
-                    order by CONFIGURATION.CREATED desc;
+                    order by CONFIGURATION.CREATED asc;
                 """
             )
             configs = curs.fetchall()
