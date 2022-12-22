@@ -124,7 +124,8 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
         try:
             curs = self.queue.conn.cursor()
             curs.execute("select count(*) from QUEUE where CONFIGURATION_NAME = ?;", (config,))
-            tmp = int(curs.fetchone()[0])
+            tmp = curs.fetchone()
+            print(str(tmp))
             curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
