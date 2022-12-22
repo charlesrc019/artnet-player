@@ -125,8 +125,6 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             curs = self.queue.conn.cursor()
             curs.execute("select count(*) from QUEUE where CONFIGURATION_NAME = ?;", (config,))
             tmp = curs.fetchone()
-            print(str(tmp))
-            print(int(tmp[0]))
             curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
@@ -163,7 +161,7 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            #print(str(e))
+            print(str(e))
             raise tornado.web.HTTPError(500, "Internal database error.")
             
         self.set_status(status_code=202)
