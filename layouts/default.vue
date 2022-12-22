@@ -82,7 +82,7 @@ export default {
       footer_row2: "",
       items: [
         {
-          icon: 'mdi-magnify',
+          icon: 'mdi-filmstrip-box-multiple',
           title: 'Library',
           to: '/'
         },

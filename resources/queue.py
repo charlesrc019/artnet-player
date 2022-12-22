@@ -21,7 +21,7 @@ class Queue:
             curs.execute(
                 """
                     create table QUEUE (
-                        POSITION integer not null unique,
+                        POSITION integer not null,
                         UUID text not null,
                         NAME text not null,
                         CONFIGURATION_NAME text not null,

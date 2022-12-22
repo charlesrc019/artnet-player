@@ -34,6 +34,7 @@ class QueueListHandler(tornado.web.RequestHandler):
                         IS_LOOPED,
                         POSITION
                     from QUEUE
+                    where POSTIION > 0
                     order by POSITION asc;
                 """.replace("    ","").replace("\n", " ")[1:]
             )

@@ -7,7 +7,7 @@
             <tr>
               <th></th>
               <th class="text-left">
-                Name
+                Configuration Name
               </th>
               <th class="text-left">
                 Created On
