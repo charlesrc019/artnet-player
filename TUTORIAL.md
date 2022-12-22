@@ -8,7 +8,7 @@ Once **npm** is installed, simply use `npx create-nuxt-app [app-name]` to build 
 # install dependencies
 $ npm install
 
-# serve with hot reload at localhost:3000
+# serve with hot reload at localhost:8080
 $ npm run dev
 
 # build for production and launch server

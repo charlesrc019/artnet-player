@@ -125,6 +125,7 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             curs = self.queue.conn.cursor()
             curs.execute("select * from QUEUE where CONFIGURATION_NAME = ?;", (config,))
             tmp = curs.fetchall()
+            print(str(tmp))
             curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
