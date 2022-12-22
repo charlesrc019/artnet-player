@@ -104,6 +104,9 @@ class ConfigListHandler(tornado.web.RequestHandler):
 
 class ConfigDetailsHandler(tornado.web.RequestHandler):
 
+    def initialize(self, queue):
+        self.queue = queue
+
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Methods", "*")
@@ -119,11 +122,10 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
 
         # Check that it is not in the queue.
         try:
-            conn = sqlite3.connect(":memory:")
-            curs = conn.cursor()
-            curs.execute("select * from QUEUE where CONFIGURATION = ?;", (config,))
+            curs = self.queue.conn.cursor()
+            curs.execute("select * from QUEUE where CONFIGURATION_NAME = ?;", (config,))
             tmp = curs.fetchall()
-            conn.close()
+            curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
         if tmp is not None:
@@ -159,7 +161,7 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            print(str(e))
+            #print(str(e))
             raise tornado.web.HTTPError(500, "Internal database error.")
             
         self.set_status(status_code=202)

@@ -70,14 +70,14 @@ def main():
     # Define routes and behaviors.
     application = tornado.web.Application(
         [
-            (r'/api/configurations/(.*)', ConfigDetailsHandler),
+            (r'/api/configurations/(.*)', ConfigDetailsHandler, {"queue": queue}),
             (r'/api/configurations', ConfigListHandler),
-            (r'/api/recordings/(.*)', RecordingDetailsHandler),
+            (r'/api/recordings/(.*)', RecordingDetailsHandler, {"queue": queue}),
             (r'/api/recordings', RecordingListHandler),
-            (r'/api/queue/(.*)', QueueDetailsHandler, {"queue": queue}),
-            (r'/api/queue', QueueListHandler, {"queue": queue}),
+            (r'/api/queue/(.*)', QueueDetailsHandler, {"ola": ola, "queue": queue}),
+            (r'/api/queue', QueueListHandler, {"ola": ola, "queue": queue}),
             (r'/api/record', RecordHandler, {"ola": ola}),
-            (r'/api/play', PlayHandler, {"ola": ola}),
+            #(r'/api/play', PlayHandler, {"ola": ola}),
             (r'/api/stop', StopHandler, {"ola": ola}),
             (r'/api/status', StatusHandler, {"ola": ola}),
             (

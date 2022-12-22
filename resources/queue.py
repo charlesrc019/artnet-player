@@ -12,9 +12,8 @@ class Queue:
 
     def __init__(self, ola):
         self.ola = ola
-        self.active = False
+        self.watchdog_active = False
         self.skip = False
-        self.last_status = ""
         try:
             self.conn = sqlite3.connect(":memory:", isolation_level = None)
             #self.conn.set_trace_callback(print)
@@ -37,7 +36,7 @@ class Queue:
         tornado.ioloop.PeriodicCallback(self.watchdog, 100).start()
 
     def watchdog(self):
-        if self.active:
+        if self.watchdog_active:
             ola_status = self.ola.status()["status"]
 
             # Simple switch if we are now free to play.
@@ -47,7 +46,7 @@ class Queue:
 
                     # Check if looped, if not skipped.
                     is_looped = False
-                    if not self.skip: 
+                    if not self.skip:
                         curs.execute("select IS_LOOPED from QUEUE where POSITION = 0;")
                         tmp = curs.fetchone()
                         if tmp is not None:
@@ -61,9 +60,9 @@ class Queue:
                         curs.execute("select count(*) from QUEUE;")
                         tmp = curs.fetchone()
                         if (tmp is None) or (int(tmp[0]) == 0): # special case to turn off watchdog if empty
-                            self.active = False
+                            self.watchdog_active = False
                             return
-                        curs.execute("select * from QUEUE;")
+                        #curs.execute("select * from QUEUE;")
 
                         while (True):
                             curs.execute("update QUEUE set POSITION = POSITION - 1;")
@@ -87,16 +86,5 @@ class Queue:
                     "configuration": tmp[2],
                     "total_secs": tmp[3]
                 }
-                self.ola.play(details, from_queue=True)
-            
-            # Remove top entry if switched to manual.
-            elif (self.last_status == "playing queue") and (ola_status == "playing"):
-                try:
-                    curs = self.conn.cursor()
-                    curs.execute("delete from QUEUE where POSITION = 0;")
-                    curs.close()
-                except:
-                    raise Exception("Internal database error.")
+                self.ola.play(details)
 
-            # Update last status.
-            self.last_status = ola_status

@@ -80,7 +80,7 @@ class RecordHandler(tornado.web.RequestHandler):
 
         # Check that we aren't doing anything else.
         if self.ola.status()["status"] != "free":
-            raise tornado.web.HTTPError(400, "Cannot record. Playback in progress.")
+            raise tornado.web.HTTPError(400, "Cannot record. Another task is in progress.")
 
         # Generate and save new record information.
         idenitifier = str(uuid.uuid4())
@@ -132,7 +132,7 @@ class RecordHandler(tornado.web.RequestHandler):
         self.set_status(status_code=202)
         self.finish()
 
-class PlayHandler(tornado.web.RequestHandler):
+'''class PlayHandler(tornado.web.RequestHandler):
 
     def initialize(self, ola):
         self.ola = ola
@@ -208,6 +208,7 @@ class PlayHandler(tornado.web.RequestHandler):
 
         self.set_status(status_code=202)
         self.finish()
+'''
 
 class StopHandler(tornado.web.RequestHandler):
 

@@ -89,6 +89,9 @@ class RecordingListHandler(tornado.web.RequestHandler):
 
 class RecordingDetailsHandler(tornado.web.RequestHandler):
 
+    def initialize(self, queue):
+        self.queue = queue
+
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Methods", "*")
@@ -149,15 +152,14 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
 
         # Check that it is not in the queue.
         try:
-            conn = sqlite3.connect(":memory:")
-            curs = conn.cursor()
+            curs = self.queue.conn.cursor()
             curs.execute("select * from QUEUE where UUID = ?;", (identifier,))
             tmp = curs.fetchall()
-            conn.close()
+            curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
         if tmp is not None:
-            raise tornado.web.HTTPError(400, "Cannot delete recording while used in the queue.")
+            raise tornado.web.HTTPError(400, "Cannot delete recording while it is in the queue.")
 
         # Use database connection.
         try:

@@ -32,13 +32,11 @@ class OLA:
             }
             return resp
 
-    def play(self, details, from_queue = False):
+    def play(self, details):
         if self.status()["status"] == "recording":
             raise Exception("Cannot start playback. A recording is already running.")
 
         self.active_task = "playing"
-        if from_queue:
-            self.active_task = "playing queue"
         self.active_epoch = time.time()
         self.active_details = details
         

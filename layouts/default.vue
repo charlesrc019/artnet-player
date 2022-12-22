@@ -106,7 +106,7 @@ export default {
     stopPlayback() {
       axios
         //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/stop")
-        .post("http://10.0.0.26:8080/api/stop")
+        .post("http://10.0.0.7:8080/api/stop")
         .then(response => {})
         .catch(error => {
           console.log(error)

@@ -76,7 +76,7 @@ export default {
     recordPlayback() {
       axios
         //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
-        .post("http://10.0.0.26:8080/api/record?id=" + this.selected)
+        .post("http://10.0.0.7:8080/api/record?id=" + this.selected)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -86,7 +86,7 @@ export default {
       if (confirm("All associated recordings will be permanently deleted.\nContinue?")) {
         axios
           //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations/" + this.selected)
-          .delete("http://10.0.0.26:8080/api/configurations/" + this.selected)
+          .delete("http://10.0.0.7:8080/api/configurations/" + this.selected)
           .then(response => {
             window.location.reload(true)
           })
@@ -99,7 +99,7 @@ export default {
   mounted() {
     axios
       //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
-      .get("http://10.0.0.26:8080/api/configurations")
+      .get("http://10.0.0.7:8080/api/configurations")
       .then(response => {
         this.configurations = response.data
       })
