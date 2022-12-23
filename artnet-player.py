@@ -89,7 +89,7 @@ def main():
                 }
             )
         ],
-        debug=True
+        debug=False
     )
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(tornado.options.options.port)
