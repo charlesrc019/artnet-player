@@ -30,7 +30,7 @@
               v-for="item in items"
               :key="item.name"
             >
-              <td>{{ item.name }}</td>
+              <td>{{ (item.position === 0) ? ">  " : "" }}{{ item.name }}</td>
               <td class="d-none d-lg-table-cell">{{ item.configuration }}</td>
               <td class="d-none d-lg-table-cell">
                 {{ 
