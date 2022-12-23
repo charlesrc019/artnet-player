@@ -78,7 +78,7 @@ class RecordingListHandler(tornado.web.RequestHandler):
                 "identifier": sequence[1],
                 "configuration": sequence[2],
                 "duration": f"{str(int(int(sequence[3]) / 60))}:{str(int(sequence[3]) % 60).zfill(2)}",
-                "created": sequence[5]
+                "created": sequence[4]
             }
             resp.append(tmp)
 
