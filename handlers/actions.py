@@ -158,7 +158,7 @@ class StopHandler(tornado.web.RequestHandler):
             if "Looped" in canceled_details["name"]:
                 try:
                     curs = self.queue.conn.cursor()
-                    curs.execute("update QUEUE set IS_LOOPED = 0 where POSTITION = 0;")
+                    curs.execute("update QUEUE set IS_LOOPED = 0 where POSITION = 0;")
                     curs.close()
                 except:
                     raise tornado.web.HTTPError(500, "Internal database error.")

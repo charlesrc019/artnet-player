@@ -51,6 +51,7 @@
                   small
                   class="mr-2"
                   @click="prioritizeItem(item.position)"
+                  :disabled="(item.position === 0) ? true : false"
                 >
                   mdi-chevron-up
                 </v-icon>
@@ -58,6 +59,7 @@
                   small
                   class="mr-2"
                   @click="moveItem(item.position)"
+                  :disabled="(item.position === 0) ? true : false"
                 >
                   mdi-chevron-triple-up
                 </v-icon>
@@ -65,6 +67,7 @@
                   small
                   class="mr-2"
                   @click="deleteItem(item.position)"
+                  :disabled="(item.position === 0) ? true : false"
                 >
                   mdi-delete
                 </v-icon>
@@ -174,7 +177,7 @@ export default {
   },
   mounted() {
     this.load()
-    this.interval = setInterval(this.load, 2000)
+    this.interval = setInterval(this.load, 5000)
   },
   beforeUnmount() {
     clearInterval(this.interval)
