@@ -110,8 +110,8 @@ export default {
   methods: {
     load() {
       axios
-        //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/playback")
-        .get("http://10.0.0.21:8080/api/playback")
+        .get("http://" + window.location.hostname + ":" + window.location.port + "/api/playback")
+        //.get("http://10.0.0.21:8080/api/playback")
         .then(response => {
           this.items = response.data.items
         })
@@ -121,8 +121,8 @@ export default {
     },
     moveItem(pos) {
       axios
-        //.put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos)
-        .put("http://10.0.0.21:8080/api/playback/" + pos + "?position=up")
+        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos + "?position=up")
+        //.put("http://10.0.0.21:8080/api/playback/" + pos + "?position=up")
         .then(response => {
           this.snackbar_text = "Item moved."
           this.snackbar = true
@@ -133,8 +133,8 @@ export default {
     },
     prioritizeItem(pos) {
       axios
-        //.put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos)
-        .put("http://10.0.0.21:8080/api/playback/" + pos + "?position=next")
+        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos + "?position=next")
+        //.put("http://10.0.0.21:8080/api/playback/" + pos + "?position=next")
         .then(response => {
           this.snackbar_text = "Item moved next."
           this.snackbar = true
@@ -149,8 +149,8 @@ export default {
         loop_txt = "false"
       }
       axios
-        //.put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos)
-        .put("http://10.0.0.21:8080/api/playback/" + pos + "?loop=" + loop_txt)
+        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos + "?loop=" + loop_txt)
+        //.put("http://10.0.0.21:8080/api/playback/" + pos + "?loop=" + loop_txt)
         .then(response => {
           this.snackbar_text = "Item looped."
           if (!is_looped) {
@@ -164,8 +164,8 @@ export default {
     },
     deleteItem(pos) {
       axios
-        //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos)
-        .delete("http://10.0.0.21:8080/api/playback/" + pos)
+        .delete("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos)
+        //.delete("http://10.0.0.21:8080/api/playback/" + pos)
         .then(response => {
           this.snackbar_text = "Item deleted."
           this.snackbar = true

@@ -136,8 +136,8 @@ export default {
   methods: {
     load() {
       axios
-        //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
-        .get("http://10.0.0.21:8080/api/configurations")
+        .get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
+        //.get("http://10.0.0.21:8080/api/configurations")
         .then(response => {
           this.configurations = response.data
         })
@@ -147,8 +147,8 @@ export default {
     },
     recordPlayback() {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
-        .post("http://10.0.0.21:8080/api/record?id=" + this.selected)
+        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
+        //.post("http://10.0.0.21:8080/api/record?id=" + this.selected)
         .then(response => {})
         .catch(error => {
           console.log(error.response)
@@ -156,8 +156,8 @@ export default {
     },
     addConfiguration() {
       axios
-        //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations?name=" + this.dialog_text)
-        .post("http://10.0.0.21:8080/api/configurations?name=" + this.dialog_text)
+        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations?name=" + this.dialog_text)
+        //.post("http://10.0.0.21:8080/api/configurations?name=" + this.dialog_text)
         .then(response => {
           this.dialog = false
           this.snackbar = true
@@ -171,8 +171,8 @@ export default {
     deleteConfiguration() {
       if (confirm("All associated recordings will be permanently deleted.\nContinue?")) {
         axios
-          //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations/" + this.selected)
-          .delete("http://10.0.0.21:8080/api/configurations/" + this.selected)
+          .delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations/" + this.selected)
+          //.delete("http://10.0.0.21:8080/api/configurations/" + this.selected)
           .then(response => {
             this.snackbar = true
             this.snackbar_text = "Configuration deleted."

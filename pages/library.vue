@@ -163,8 +163,8 @@ export default {
   methods: {
     load() {
       axios
-        //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings")
-        .get("http://10.0.0.21:8080/api/recordings")
+        .get("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings")
+        //.get("http://10.0.0.21:8080/api/recordings")
         .then(response => {
           this.recordings = response.data
         })
@@ -179,8 +179,8 @@ export default {
     },
     playRecording(item) {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=now&id=" + item.identifier)
-        .post("http://10.0.0.21:8080/api/playback?when=now&id=" + item.identifier)
+        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=now&id=" + item.identifier)
+        //.post("http://10.0.0.21:8080/api/playback?when=now&id=" + item.identifier)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -188,8 +188,8 @@ export default {
     },
     insertRecording(item) {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=next&id=" + item.identifier)
-        .post("http://10.0.0.21:8080/api/playback?when=next&id=" + item.identifier)
+        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=next&id=" + item.identifier)
+        //.post("http://10.0.0.21:8080/api/playback?when=next&id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue next."
           this.snackbar = true
@@ -200,8 +200,8 @@ export default {
     },
     addRecording(item) {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?id=" + item.identifier)
-        .post("http://10.0.0.21:8080/api/playback?id=" + item.identifier)
+        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?id=" + item.identifier)
+        //.post("http://10.0.0.21:8080/api/playback?id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue."
           this.snackbar = true
@@ -212,8 +212,8 @@ export default {
     },
     editRecording() {
       axios
-        //.put("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + item.identifier)
-        .put("http://10.0.0.21:8080/api/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
+        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
+        //.put("http://10.0.0.21:8080/api/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
         .then(response => {
           this.dialog = false
           this.snackbar_text = "Recording edited."
@@ -227,8 +227,8 @@ export default {
     deleteRecording(item) {
       if (confirm("This recording will be permanently deleted.\nContinue?")) {
         axios
-          //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + item.identifier)
-          .delete("http://10.0.0.21:8080/api/recordings/" + item.identifier)
+          .delete("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + item.identifier)
+          //.delete("http://10.0.0.21:8080/api/recordings/" + item.identifier)
           .then(response => {
             this.snackbar_text = "Recording deleted."
             this.snackbar = true

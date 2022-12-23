@@ -105,8 +105,8 @@ export default {
   methods: {
     stopPlayback() {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/stop")
-        .post("http://10.0.0.21:8080/api/stop")
+        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/stop")
+        //.post("http://10.0.0.21:8080/api/stop")
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -114,8 +114,8 @@ export default {
     }
   },
   mounted() {
-    //let socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/api/status")
-    let socket = new WebSocket("ws://10.0.0.21:8080/api/status")
+    let socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/api/status")
+    //let socket = new WebSocket("ws://10.0.0.21:8080/api/status")
     socket.onopen = (event) => {}
     socket.onmessage = (event) => {
       this.activity = JSON.parse(event.data)
