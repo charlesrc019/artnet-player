@@ -5,13 +5,13 @@
         <template v-slot:default>
           <thead>
             <tr>
+              <th></th>
               <th class="text-left">
-                Configuration Name
+                Configuration
               </th>
               <th class="text-left">
                 Created On
               </th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -19,13 +19,13 @@
               v-for="configuration in configurations"
               :key="configuration.name"
             >
-              <td>{{ configuration.name }}</td>
-              <td>{{ configuration.created }}</td>
               <td align="start">
                 <v-radio-group v-model="selected">
                   <v-radio class="table-radio ma-0 pa-0" :value="configuration.name"/>
                 </v-radio-group>
               </td>
+              <td>{{ configuration.name }}</td>
+              <td>{{ configuration.created }}</td>
             </tr>
           </tbody>
         </template>
@@ -134,6 +134,17 @@ export default {
     }
   },
   methods: {
+    load() {
+      axios
+        //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
+        .get("http://10.0.0.7:8080/api/configurations")
+        .then(response => {
+          this.configurations = response.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
     recordPlayback() {
       axios
         //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
@@ -151,7 +162,7 @@ export default {
           this.dialog = false
           this.snackbar = true
           this.snackbar_text = "Configuration added."
-          window.location.reload(true)
+          this.load()
         })
         .catch(error => {
           console.log(error)
@@ -165,7 +176,7 @@ export default {
           .then(response => {
             this.snackbar = true
             this.snackbar_text = "Configuration deleted."
-            window.location.reload(true)
+            this.load()
           })
           .catch(error => {
             console.log(error)
@@ -174,15 +185,7 @@ export default {
     }
   },
   mounted() {
-    axios
-      //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
-      .get("http://10.0.0.7:8080/api/configurations")
-      .then(response => {
-        this.configurations = response.data
-      })
-      .catch(error => {
-        console.log(error)
-      })
+    this.load()
   }
 }
 </script>

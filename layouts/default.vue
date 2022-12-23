@@ -82,14 +82,14 @@ export default {
       footer_row2: "",
       items: [
         {
-          icon: 'mdi-filmstrip-box-multiple',
-          title: 'Library',
+          icon: 'mdi-playlist-play',
+          title: 'Queue',
           to: '/'
         },
         {
-          icon: 'mdi-tray-full',
-          title: 'Queue',
-          to: '/queue'
+          icon: 'mdi-filmstrip-box-multiple',
+          title: 'Library',
+          to: '/library'
         },
         {
           icon: 'mdi-plus-circle-outline',

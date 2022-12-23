@@ -27,7 +27,7 @@ import os
 from handlers.configurations import ConfigListHandler, ConfigDetailsHandler
 from handlers.recordings import RecordingListHandler, RecordingDetailsHandler
 from handlers.actions import StatusHandler, RecordHandler, StopHandler #PlayHandler
-from handlers.queue import QueueListHandler, QueueDetailsHandler
+from handlers.playback import PlaybackListHandler, PlaybackDetailsHandler
 from resources.ola import OLA
 from resources.queue import Queue
 
@@ -74,8 +74,8 @@ def main():
             (r'/api/configurations', ConfigListHandler),
             (r'/api/recordings/(.*)', RecordingDetailsHandler, {"queue": queue}),
             (r'/api/recordings', RecordingListHandler),
-            (r'/api/queue/(.*)', QueueDetailsHandler, {"ola": ola, "queue": queue}),
-            (r'/api/queue', QueueListHandler, {"ola": ola, "queue": queue}),
+            (r'/api/playback/(.*)', PlaybackDetailsHandler, {"ola": ola, "queue": queue}),
+            (r'/api/playback', PlaybackListHandler, {"ola": ola, "queue": queue}),
             (r'/api/record', RecordHandler, {"ola": ola}),
             #(r'/api/play', PlayHandler, {"ola": ola}),
             (r'/api/stop', StopHandler, {"ola": ola}),

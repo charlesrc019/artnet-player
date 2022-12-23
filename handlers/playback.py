@@ -5,7 +5,7 @@ import sqlite3
 import re
 import json
 
-class QueueListHandler(tornado.web.RequestHandler):
+class PlaybackListHandler(tornado.web.RequestHandler):
 
     def initialize(self, ola, queue):
         self.ola = ola
@@ -174,7 +174,7 @@ class QueueListHandler(tornado.web.RequestHandler):
         self.set_status(status_code=202)
         self.finish()
 
-class QueueDetailsHandler(tornado.web.RequestHandler):
+class PlaybackDetailsHandler(tornado.web.RequestHandler):
 
     def initialize(self, ola, queue):
         self.ola = ola
