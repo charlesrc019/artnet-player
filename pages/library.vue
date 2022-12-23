@@ -1,11 +1,12 @@
 <template>
   <v-container>
-    <v-card>
-      <v-card-title>
-        Recordings
+    <v-card flat>
+      <v-card-title class="pl-6">
+        Library
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
+          class="ma-0"
           append-icon="mdi-magnify"
           label="Search"
           single-line
@@ -46,7 +47,7 @@
           <v-icon
             small
             class="mr-2"
-            @click="editRecording(item)"
+            @click="loadDialog(item)"
           >
             mdi-pencil
           </v-icon>
@@ -71,7 +72,6 @@
           <v-text-field
             v-model="dialog_text"
             label="Name"
-            :rules="rules"
             hide-details="auto"
           ></v-text-field>
         </v-card-text>
@@ -164,7 +164,7 @@ export default {
     load() {
       axios
         //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings")
-        .get("http://10.0.0.7:8080/api/recordings")
+        .get("http://10.0.0.21:8080/api/recordings")
         .then(response => {
           this.recordings = response.data
         })
@@ -172,10 +172,15 @@ export default {
           console.log(error)
         })
     },
+    loadDialog(item) {
+      this.dialog_id = item.identifier
+      this.dialog_text = item.name
+      this.dialog = true
+    },
     playRecording(item) {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/queue?when=now&id=" + identifier)
-        .post("http://10.0.0.7:8080/api/queue?when=now&id=" + item.identifier)
+        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=now&id=" + item.identifier)
+        .post("http://10.0.0.21:8080/api/playback?when=now&id=" + item.identifier)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -183,8 +188,8 @@ export default {
     },
     insertRecording(item) {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/queue?when=next&id=" + identifier)
-        .post("http://10.0.0.7:8080/api/queue?when=next&id=" + item.identifier)
+        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=next&id=" + item.identifier)
+        .post("http://10.0.0.21:8080/api/playback?when=next&id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue next."
           this.snackbar = true
@@ -195,8 +200,8 @@ export default {
     },
     addRecording(item) {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/queue?id=" + identifier)
-        .post("http://10.0.0.7:8080/api/queue?id=" + item.identifier)
+        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?id=" + item.identifier)
+        .post("http://10.0.0.21:8080/api/playback?id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue."
           this.snackbar = true
@@ -205,11 +210,16 @@ export default {
           console.log(error)
         })
     },
-    editRecording(item) {
+    editRecording() {
       axios
-        //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/queue?when=now&id=" + identifier)
-        .post("http://10.0.0.7:8080/api/queue?when=now&id=" + item.identifier)
-        .then(response => {})
+        //.put("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + item.identifier)
+        .put("http://10.0.0.21:8080/api/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
+        .then(response => {
+          this.dialog = false
+          this.snackbar_text = "Recording edited."
+          this.snackbar = true
+          this.load()
+        })
         .catch(error => {
           console.log(error)
         })
@@ -217,8 +227,8 @@ export default {
     deleteRecording(item) {
       if (confirm("This recording will be permanently deleted.\nContinue?")) {
         axios
-          //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/queue?when=now&id=" + identifier)
-          .delete("http://10.0.0.7:8080/api/recordings?id=" + item.identifier)
+          //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + item.identifier)
+          .delete("http://10.0.0.21:8080/api/recordings/" + item.identifier)
           .then(response => {
             this.snackbar_text = "Recording deleted."
             this.snackbar = true

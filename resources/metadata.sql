@@ -10,7 +10,6 @@ create table RECORDING (
     NAME text not null,
     CONFIGURATION_ID integer not null,
     SECONDS integer not null,
-    NOTES text,
     IN_PROGRESS integer not null,
     CREATED text not null
 );

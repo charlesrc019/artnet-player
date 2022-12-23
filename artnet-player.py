@@ -78,7 +78,7 @@ def main():
             (r'/api/playback', PlaybackListHandler, {"ola": ola, "queue": queue}),
             (r'/api/record', RecordHandler, {"ola": ola}),
             #(r'/api/play', PlayHandler, {"ola": ola}),
-            (r'/api/stop', StopHandler, {"ola": ola}),
+            (r'/api/stop', StopHandler, {"ola": ola, "queue": queue}),
             (r'/api/status', StatusHandler, {"ola": ola}),
             (
                 r'/(.*)',

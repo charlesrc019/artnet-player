@@ -1,6 +1,9 @@
 <template>
   <v-container>
     <v-card flat>
+      <v-card-title class="pl-6">
+        Configurations
+      </v-card-title>
       <v-simple-table class="mt-4">
         <template v-slot:default>
           <thead>
@@ -19,7 +22,7 @@
               v-for="configuration in configurations"
               :key="configuration.name"
             >
-              <td align="start">
+              <td class="table-radio-cell">
                 <v-radio-group v-model="selected">
                   <v-radio class="table-radio ma-0 pa-0" :value="configuration.name"/>
                 </v-radio-group>
@@ -34,7 +37,6 @@
         <v-btn
           class="ma-2"
           color="secondary"
-          large
           @click.stop="dialog = true"
         >
           Add
@@ -42,7 +44,6 @@
         <v-btn
           class="my-2"
           color="secondary"
-          large
           :disabled="selected == null"
           @click="deleteConfiguration()"
         >
@@ -52,7 +53,6 @@
         <v-btn
           class="ma-2"
           color="red"
-          large
           :disabled="selected == null"
           @click="recordPlayback()"
         >
@@ -137,7 +137,7 @@ export default {
     load() {
       axios
         //.get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
-        .get("http://10.0.0.7:8080/api/configurations")
+        .get("http://10.0.0.21:8080/api/configurations")
         .then(response => {
           this.configurations = response.data
         })
@@ -148,16 +148,16 @@ export default {
     recordPlayback() {
       axios
         //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
-        .post("http://10.0.0.7:8080/api/record?id=" + this.selected)
+        .post("http://10.0.0.21:8080/api/record?id=" + this.selected)
         .then(response => {})
         .catch(error => {
-          console.log(error)
+          console.log(error.response)
         })
     },
     addConfiguration() {
       axios
         //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations?name=" + this.dialog_text)
-        .post("http://10.0.0.7:8080/api/configurations?name=" + this.dialog_text)
+        .post("http://10.0.0.21:8080/api/configurations?name=" + this.dialog_text)
         .then(response => {
           this.dialog = false
           this.snackbar = true
@@ -172,7 +172,7 @@ export default {
       if (confirm("All associated recordings will be permanently deleted.\nContinue?")) {
         axios
           //.delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations/" + this.selected)
-          .delete("http://10.0.0.7:8080/api/configurations/" + this.selected)
+          .delete("http://10.0.0.21:8080/api/configurations/" + this.selected)
           .then(response => {
             this.snackbar = true
             this.snackbar_text = "Configuration deleted."
@@ -197,5 +197,8 @@ export default {
   }
   .table-radio i {
     font-size: 18px !important;
+  }
+  .table-radio-cell {
+    max-width: 10px !important;
   }
 </style>

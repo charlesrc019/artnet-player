@@ -33,8 +33,8 @@ class RecordingListHandler(tornado.web.RequestHandler):
         query_sql = ""
         query_input = ()
         if query != "":
-            query_sql = "and (RECORDING.NAME like ? or RECORDING.NOTES like ? or RECORDING.UUID like ?)"
-            query_input = (f"%{query}%", f"%{query}%", f"%{query}%")
+            query_sql = "and (RECORDING.NAME like ? or RECORDING.UUID like ?)"
+            query_input = (f"%{query}%", f"%{query}%")
         config_sql = ""
         if config != "":
             config_sql = f"and CONFIGURATION_NAME = '{config}'"
@@ -52,7 +52,6 @@ class RecordingListHandler(tornado.web.RequestHandler):
                         RECORDING.UUID,
                         CONFIGURATION.NAME,
                         RECORDING.SECONDS,
-                        RECORDING.NOTES,
                         RECORDING.CREATED
                     from RECORDING
                     join CONFIGURATION
@@ -78,9 +77,7 @@ class RecordingListHandler(tornado.web.RequestHandler):
                 "name": sequence[0],
                 "identifier": sequence[1],
                 "configuration": sequence[2],
-                "seconds": int(sequence[3]),
                 "duration": f"{str(int(int(sequence[3]) / 60))}:{str(int(sequence[3]) % 60).zfill(2)}",
-                "notes": sequence[4],
                 "created": sequence[5]
             }
             resp.append(tmp)
@@ -109,8 +106,7 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
         # Fetch query parameters.
         try:
             name = self.get_argument("name", None)
-            notes = self.get_argument("notes", None)
-            if (name is None) and (notes is None):
+            if name is None:
                 raise Exception()
         except:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
@@ -136,8 +132,6 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             # Update sequence.
             if name is not None:
                 curs.execute("update RECORDING set NAME = ? where UUID = ?;", (name, identifier))
-            if notes is not None:
-                curs.execute("update RECORDING set NOTES = ? where UUID = ?;", (notes, identifier))
 
             conn.commit()
             conn.close()

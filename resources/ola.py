@@ -24,7 +24,9 @@ class OLA:
                 self.active_details = None
             return {"status": "free"}
         else:
-            elasped_secs = round(time.time() - self.active_epoch)
+            elasped_secs = 0
+            if self.active_epoch is not None:
+                elasped_secs = round(time.time() - self.active_epoch)
             resp = {
                 "status": self.active_task,
                 "details": self.active_details,

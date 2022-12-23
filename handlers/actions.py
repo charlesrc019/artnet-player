@@ -132,88 +132,11 @@ class RecordHandler(tornado.web.RequestHandler):
         self.set_status(status_code=202)
         self.finish()
 
-'''class PlayHandler(tornado.web.RequestHandler):
-
-    def initialize(self, ola):
-        self.ola = ola
-
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Methods", "*")
-
-    async def options(self, *args):
-        self.set_status(204)
-        self.finish()
-
-    async def get(self):
-        raise tornado.web.HTTPError(400, "Only POST requests accepted on this endpoint.")
-
-    async def post(self):
-
-        # Fetch query parameters.
-        try:
-            identifier = self.get_argument("id")
-            pattern = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
-            if not pattern.match(identifier):
-                raise Exception()
-        except:
-            raise tornado.web.HTTPError(400, "Invalid parameters.")
-
-        # Use database.
-        try:
-            conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
-            curs = conn.cursor()
-
-            # Fetch recording details.
-            curs.execute(
-                """
-                    select 
-                        RECORDING.NAME,
-                        RECORDING.UUID,
-                        CONFIGURATION.NAME,
-                        RECORDING.SECONDS 
-                    from RECORDING 
-                    join CONFIGURATION 
-                        on RECORDING.CONFIGURATION_ID = CONFIGURATION.ID 
-                    where RECORDING.UUID = ?;
-                """,
-                (identifier,)
-            )
-            tmp = curs.fetchone()
-            if tmp is None:
-                raise tornado.web.HTTPError(404, "Recording not found.")
-
-            conn.close()
-        except tornado.web.HTTPError as e:
-            raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
-
-        # Send playback instructions to OLA.
-        details = {
-            "name": tmp[0],
-            "identifier": tmp[1],
-            "configuration": tmp[2],
-            "total_secs": tmp[3]
-        }
-
-        # Check that we aren't recording or playing.
-        active_task = self.ola.status()
-        if active_task == "recording":
-            raise tornado.web.HTTPError(400, "Cannot play. Recording in progress.")
-        elif active_task == "playing":
-            self.ola.stop()
-
-        self.ola.play(details)
-
-        self.set_status(status_code=202)
-        self.finish()
-'''
-
 class StopHandler(tornado.web.RequestHandler):
 
-    def initialize(self, ola):
+    def initialize(self, ola, queue):
         self.ola = ola
+        self.queue = queue
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -229,6 +152,16 @@ class StopHandler(tornado.web.RequestHandler):
     async def post(self):
         canceled_task = self.ola.active_task
         canceled_details = self.ola.active_details
+
+        # If currently playing a looped recording, unloop it.
+        if canceled_task == "playing":
+            if "Looped" in canceled_details["name"]:
+                try:
+                    curs = self.queue.conn.cursor()
+                    curs.execute("update QUEUE set IS_LOOPED = 0 where POSTITION = 0;")
+                    curs.close()
+                except:
+                    raise tornado.web.HTTPError(500, "Internal database error.")
 
         self.ola.stop()
 
@@ -270,7 +203,6 @@ class StopHandler(tornado.web.RequestHandler):
             # Report error.
             if not is_valid:
                 raise tornado.web.HTTPError(500, "No data recorded.")
-
 
         self.set_status(status_code=202)
         self.finish()

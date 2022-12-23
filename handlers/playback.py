@@ -34,7 +34,6 @@ class PlaybackListHandler(tornado.web.RequestHandler):
                         IS_LOOPED,
                         POSITION
                     from QUEUE
-                    where POSITION > 0
                     order by POSITION asc;
                 """.replace("    ","").replace("\n", " ")[1:]
             )
@@ -145,31 +144,9 @@ class PlaybackListHandler(tornado.web.RequestHandler):
 
         # Play now.
         if when == "now":
-            self.queue.skip = True
+            self.ola.stop()
 
         self.queue.watchdog_active = True
-
-        self.set_status(status_code=202)
-        self.finish()
-
-    async def put(self):
-
-        # Safety switch for queue modification.
-        tmp = self.ola.status()["status"]
-        if (tmp != "free") and (tmp != "playing"):
-            raise tornado.web.HTTPError(400, f"Cannot modify queue while {tmp}.")
-
-        # Fetch query parameters.
-        try:
-            action = self.get_argument("action", "")
-            if (skip != "skip"):
-                raise Exception()
-        except:
-            raise tornado.web.HTTPError(400, "Invalid parameters.")
-
-        # Initiate skip.
-        if action == "skip":
-            self.queue.skip = True
 
         self.set_status(status_code=202)
         self.finish()

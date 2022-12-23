@@ -13,7 +13,6 @@ class Queue:
     def __init__(self, ola):
         self.ola = ola
         self.watchdog_active = False
-        self.skip = False
         try:
             self.conn = sqlite3.connect(":memory:", isolation_level = None)
             #self.conn.set_trace_callback(print)
@@ -40,19 +39,16 @@ class Queue:
             ola_status = self.ola.status()["status"]
 
             # Simple switch if we are now free to play.
-            if (ola_status == "free") or (self.skip):
+            if ola_status == "free":
                 try:
                     curs = self.conn.cursor()
 
-                    # Check if looped, if not skipped.
+                    # Check if looped.
                     is_looped = False
-                    if not self.skip:
-                        curs.execute("select IS_LOOPED from QUEUE where POSITION = 0;")
-                        tmp = curs.fetchone()
-                        if tmp is not None:
-                            is_looped = bool(int(tmp[0]))
-                    else:
-                        self.skip = False
+                    curs.execute("select IS_LOOPED from QUEUE where POSITION = 0;")
+                    tmp = curs.fetchone()
+                    if tmp is not None:
+                        is_looped = bool(int(tmp[0]))
 
                     # Move forward if not looped.
                     if not is_looped:
@@ -80,8 +76,11 @@ class Queue:
                 except:
                     raise Exception("Internal database error.")
 
+                rec_name = tmp[0]
+                if is_looped:
+                    rec_name += " (Looped)"
                 details = {
-                    "name": tmp[0],
+                    "name": rec_name,
                     "identifier": tmp[1],
                     "configuration": tmp[2],
                     "total_secs": tmp[3]

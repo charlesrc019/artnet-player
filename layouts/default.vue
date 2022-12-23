@@ -92,9 +92,9 @@ export default {
           to: '/library'
         },
         {
-          icon: 'mdi-plus-circle-outline',
-          title: 'Record',
-          to: '/record'
+          icon: 'mdi-cog',
+          title: 'Configurations',
+          to: '/configurations'
         }
       ],
       activity: {
@@ -106,16 +106,16 @@ export default {
     stopPlayback() {
       axios
         //.post("http://" + window.location.hostname + ":" + window.location.port + "/api/stop")
-        .post("http://10.0.0.7:8080/api/stop")
+        .post("http://10.0.0.21:8080/api/stop")
         .then(response => {})
         .catch(error => {
           console.log(error)
         })
     }
   },
-  mounted: function() {
+  mounted() {
     //let socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/api/status")
-    let socket = new WebSocket("ws://10.0.0.26/api/status")
+    let socket = new WebSocket("ws://10.0.0.21:8080/api/status")
     socket.onopen = (event) => {}
     socket.onmessage = (event) => {
       this.activity = JSON.parse(event.data)
