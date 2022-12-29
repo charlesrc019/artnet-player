@@ -14,7 +14,10 @@ class OLA:
         self.active_task = None
         self.active_epoch = None
         self.active_details = None
-
+        
+        # Initialize patching.
+        self.is_output = None
+        self.patch_output()
 
     def status(self):
         if self.__executor._work_queue.qsize() == 0:
@@ -38,6 +41,9 @@ class OLA:
         if self.status()["status"] == "recording":
             raise Exception("Cannot start playback. A recording is already running.")
 
+        if not self.is_output:
+            self.patch_output()
+
         self.active_task = "playing"
         self.active_epoch = time.time()
         self.active_details = details
@@ -50,6 +56,9 @@ class OLA:
     def record(self, details):
         if self.status()["status"] != "free":
             raise Exception("Cannot start recording. Another progress already running.")
+
+        if self.is_output:
+            self.patch_input()
 
         self.active_task = "recording"
         self.active_epoch = time.time()
@@ -68,6 +77,19 @@ class OLA:
         self.active_task = None
         self.active_epoch = None
         self.active_details = None
-        
+
+    def patch_output(self):
+        self.__executor.submit(subprocess.run, "ola_patch -d 1 -i -p 0 -u 0 --unpatch", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
+        self.__executor.submit(subprocess.run, "ola_patch -d 1 -p 0 -u 0", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
+        self.is_output = True
+
+    def patch_input(self):
+        self.__executor.submit(subprocess.run, "ola_patch -d 1 -p 0 -u 0 --unpatch", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
+        self.__executor.submit(subprocess.run, "ola_patch -d 1 -i -p 0 -u 0", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
+        self.is_output = False
 
 
