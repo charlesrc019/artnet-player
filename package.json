@@ -19,6 +19,7 @@
     "webpack": "^4.46.0"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.12.3"
+    "@nuxtjs/vuetify": "^1.12.3",
+    "material-design-icons-iconfont": "^6.7.0"
   }
 }

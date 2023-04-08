@@ -8,27 +8,33 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th></th>
               <th class="text-left">
                 Configuration
               </th>
-              <th class="text-left">
+              <th class="text-left d-none d-md-table-cell">
                 Created On
               </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="configuration in configurations"
               :key="configuration.name"
+              @click.stop="selected = configuration.name"
             >
+              <td>{{ configuration.name }}</td>
+              <td class="d-none d-md-table-cell">{{ configuration.created }}</td>
               <td class="table-radio-cell">
                 <v-radio-group v-model="selected">
-                  <v-radio class="table-radio ma-0 pa-0" :value="configuration.name"/>
+                  <v-radio 
+                    class="table-radio ma-0 pa-0" 
+                    :value="configuration.name"
+                    :on-icon="'radio_button_on'"
+                    :off-icon="'radio_button_off'"
+                  />
                 </v-radio-group>
               </td>
-              <td>{{ configuration.name }}</td>
-              <td>{{ configuration.created }}</td>
             </tr>
           </tbody>
         </template>
@@ -41,6 +47,7 @@
         >
           Add
         </v-btn>
+        <v-spacer></v-spacer>
         <v-btn
           class="my-2"
           color="secondary"
@@ -49,7 +56,6 @@
         >
           Delete
         </v-btn>
-        <v-spacer></v-spacer>
         <v-btn
           class="ma-2"
           color="red"
@@ -136,8 +142,7 @@ export default {
   methods: {
     load() {
       axios
-        .get("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations")
-        //.get("http://10.0.0.21:8080/api/configurations")
+        .get("http://" + this.$config.api + "/configurations")
         .then(response => {
           this.configurations = response.data
         })
@@ -147,17 +152,17 @@ export default {
     },
     recordPlayback() {
       axios
-        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/record?id=" + this.selected)
-        //.post("http://10.0.0.21:8080/api/record?id=" + this.selected)
+        .post("http://" + this.$config.api + "/record?id=" + this.selected)
         .then(response => {})
         .catch(error => {
           console.log(error.response)
+          this.snackbar = true
+          this.snackbar_text = "Unable to record."
         })
     },
     addConfiguration() {
       axios
-        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations?name=" + this.dialog_text)
-        //.post("http://10.0.0.21:8080/api/configurations?name=" + this.dialog_text)
+        .post("http://" + this.$config.api + "/configurations?name=" + this.dialog_text)
         .then(response => {
           this.dialog = false
           this.snackbar = true
@@ -171,8 +176,7 @@ export default {
     deleteConfiguration() {
       if (confirm("All associated recordings will be permanently deleted.\nContinue?")) {
         axios
-          .delete("http://" + window.location.hostname + ":" + window.location.port + "/api/configurations/" + this.selected)
-          //.delete("http://10.0.0.21:8080/api/configurations/" + this.selected)
+          .delete("http://" + this.$config.api + "/configurations/" + this.selected)
           .then(response => {
             this.snackbar = true
             this.snackbar_text = "Configuration deleted."
@@ -184,21 +188,18 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.load()
   }
 }
 </script>
 
 <style>
-  td .v-input,
-  .v-input__slot {
-    margin: 5px 0 0 0 !important;
-  }
   .table-radio i {
-    font-size: 18px !important;
+    font-size: 20px !important;
   }
   .table-radio-cell {
-    max-width: 10px !important;
+    max-width: 65px !important;
+    width: 65px !important;
   }
 </style>

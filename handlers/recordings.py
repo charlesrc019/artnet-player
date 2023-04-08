@@ -153,7 +153,7 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             curs.close()
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
-        if tmp is not None:
+        if (tmp is not None) and (len(tmp) > 0):
             raise tornado.web.HTTPError(400, "Cannot delete recording while it is in the queue.")
 
         # Use database connection.

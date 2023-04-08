@@ -18,7 +18,11 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
+      { name: 'theme-color', content: '#181a1b' },
+      { name: 'msapplication-navbutton-color', content: '#181a1b' },
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -27,6 +31,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    'material-design-icons-iconfont/dist/material-design-icons.min.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -48,12 +53,15 @@ export default {
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
+    treeShake: true,
+    defaultAssets: false,
     theme: {
       dark: true,
       themes: {
         dark: {
           primary: '#17c671',
-          accent: colors.amber.darken3,
+          //accent: colors.amber.darken3,
+          accent: '#000',
           secondary: colors.grey.darken3,
           info: colors.teal.lighten1,
           warning: colors.amber.base,
@@ -71,5 +79,11 @@ export default {
   server: {
     host: '0',
     port: 8080 // default: 3000
+  },
+
+  // Global Variables
+  publicRuntimeConfig: {
+    //api: window.location.hostname + ":" + window.location.port + "/api"
+    api: "10.0.0.11:8080/api"
   }
 }

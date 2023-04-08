@@ -7,7 +7,7 @@
         <v-text-field
           v-model="search"
           class="ma-0"
-          append-icon="mdi-magnify"
+          append-icon="search"
           label="Search"
           single-line
           hide-details
@@ -25,37 +25,37 @@
         <template v-slot:item.actions="{ item }">
           <v-icon
             small
-            class="mr-2"
+            class="mr-1"
             @click="playRecording(item)"
           >
-            mdi-play
+            play_arrow
           </v-icon>
           <v-icon
             small
-            class="mr-2"
+            class="mr-1"
             @click="insertRecording(item)"
           >
-            mdi-page-next-outline
+            keyboard_double_arrow_right
           </v-icon>
           <v-icon
             small
-            class="mr-2"
+            class="mr-1"
             @click="addRecording(item)"
           >
-            mdi-playlist-plus
+            add
           </v-icon>
           <v-icon
             small
-            class="mr-2"
+            class="mr-1"
             @click="loadDialog(item)"
           >
-            mdi-pencil
+            mode_edit
           </v-icon>
           <v-icon
             small
             @click="deleteRecording(item)"
           >
-            mdi-delete
+            delete
           </v-icon>
         </template>
       </v-data-table>
@@ -123,14 +123,14 @@ export default {
       search: "",
       headers: [
         {
-          text: "Name",
+          text: "Sequence",
           align: "start",
           sortable: true,
           groupable: false,
           value: "name"
         },
         {
-          text: "Configuration",
+          text: "Configuration ",
           align: "start",
           sortable: true,
           value: "configuration"
@@ -144,7 +144,7 @@ export default {
           value: "duration"
         },
         {
-          text: "Actions",
+          text: "",
           align: "center",
           filterable: false,
           sortable: false,
@@ -163,8 +163,7 @@ export default {
   methods: {
     load() {
       axios
-        .get("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings")
-        //.get("http://10.0.0.21:8080/api/recordings")
+        .get("http://" + this.$config.api + "/recordings")
         .then(response => {
           this.recordings = response.data
         })
@@ -179,8 +178,7 @@ export default {
     },
     playRecording(item) {
       axios
-        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=now&id=" + item.identifier)
-        //.post("http://10.0.0.21:8080/api/playback?when=now&id=" + item.identifier)
+        .post("http://" + this.$config.api + "/playback?when=now&id=" + item.identifier)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -188,8 +186,7 @@ export default {
     },
     insertRecording(item) {
       axios
-        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?when=next&id=" + item.identifier)
-        //.post("http://10.0.0.21:8080/api/playback?when=next&id=" + item.identifier)
+        .post("http://" + this.$config.api + "/playback?when=next&id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue next."
           this.snackbar = true
@@ -200,8 +197,7 @@ export default {
     },
     addRecording(item) {
       axios
-        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/playback?id=" + item.identifier)
-        //.post("http://10.0.0.21:8080/api/playback?id=" + item.identifier)
+        .post("http://" + this.$config.api + "/playback?id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue."
           this.snackbar = true
@@ -212,8 +208,7 @@ export default {
     },
     editRecording() {
       axios
-        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
-        //.put("http://10.0.0.21:8080/api/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
+        .put("http://" + this.$config.api + "/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
         .then(response => {
           this.dialog = false
           this.snackbar_text = "Recording edited."
@@ -227,8 +222,7 @@ export default {
     deleteRecording(item) {
       if (confirm("This recording will be permanently deleted.\nContinue?")) {
         axios
-          .delete("http://" + window.location.hostname + ":" + window.location.port + "/api/recordings/" + item.identifier)
-          //.delete("http://10.0.0.21:8080/api/recordings/" + item.identifier)
+          .delete("http://" + this.$config.api + "/recordings/" + item.identifier)
           .then(response => {
             this.snackbar_text = "Recording deleted."
             this.snackbar = true
@@ -240,7 +234,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.load()
   }
 }

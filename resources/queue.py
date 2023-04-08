@@ -13,6 +13,7 @@ class Queue:
     def __init__(self, ola):
         self.ola = ola
         self.watchdog_active = False
+        self.changed_alert = False
         try:
             self.conn = sqlite3.connect(":memory:", isolation_level = None)
             #self.conn.set_trace_callback(print)
@@ -78,7 +79,7 @@ class Queue:
 
                 rec_name = tmp[0]
                 if is_looped:
-                    rec_name += " (Looped)"
+                    rec_name += " (Loop)"
                 details = {
                     "name": rec_name,
                     "identifier": tmp[1],
@@ -86,4 +87,5 @@ class Queue:
                     "total_secs": tmp[3]
                 }
                 self.ola.play(details)
+                self.changed_alert = True
 

@@ -9,39 +9,39 @@
           <thead>
             <tr>
               <th class="text-left">
-                Name
+                Sequence
               </th>
-              <th class="text-left d-none d-lg-table-cell">
-                Configuration
-              </th>
-              <th class="text-left d-none d-lg-table-cell">
+              <th class="text-left d-none d-md-table-cell">
                 Duration
               </th>
-              <th class="text-left table-action-cell">
-                Repeat
+              <th class="text-left table-check-cell">
+                Loop
               </th>
-              <th class="text-center table-action-cell">
-                Actions
-              </th>
+              <th class="text-center table-action-cell"></th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="item in items"
-              :key="item.name"
+              :key="item.position"
             >
-              <td>{{ (item.position === 0) ? ">  " : "" }}{{ item.name }}</td>
-              <td class="d-none d-lg-table-cell">{{ item.configuration }}</td>
-              <td class="d-none d-lg-table-cell">
+              <td :color="(item.position === 0) ? '#777' : '#fff'">{{ item.name }}</td>
+              <td 
+                class="d-none d-md-table-cell"
+                :color="(item.position === 0) ? '#777' : '#fff'"
+              >
                 {{ 
                   String(Math.floor(item.total_secs / 60)) + 
                   ":" + 
                   (item.total_secs - (Math.floor(item.total_secs / 60) * 60)).toLocaleString('en-US', {minimumIntegerDigits: 2}) 
                 }}
               </td>
-              <td class="table-action-cell">
+              <td class="table-check-cell">
                 <v-checkbox
+                  class="table-check"
                   v-model="item.is_looped"
+                  :on-icon="'repeat'"
+                  :off-icon="'arrow_right_alt'"
                   @click="loopItem(item.position, item.is_looped)"
                 >
                 </v-checkbox>
@@ -49,27 +49,27 @@
               <td class="text-center table-action-cell">
                 <v-icon
                   small
-                  class="mr-2"
+                  class="mr-1"
                   @click="prioritizeItem(item.position)"
-                  :disabled="(item.position === 0) ? true : false"
+                  v-if="(item.position <= 1) ? false : true"
                 >
-                  mdi-chevron-up
+                  keyboard_arrow_up
                 </v-icon>
                 <v-icon
                   small
-                  class="mr-2"
+                  class="mr-1"
                   @click="moveItem(item.position)"
-                  :disabled="(item.position === 0) ? true : false"
+                  v-if="(item.position <= 1) ? false : true"
                 >
-                  mdi-chevron-triple-up
+                  keyboard_double_arrow_up
                 </v-icon>
                 <v-icon
                   small
-                  class="mr-2"
+                  class="mr-1"
                   @click="deleteItem(item.position)"
-                  :disabled="(item.position === 0) ? true : false"
+                  v-if="(item.position === 0) ? false : true"
                 >
-                  mdi-delete
+                  delete
                 </v-icon>
               </td>
             </tr>
@@ -110,8 +110,7 @@ export default {
   methods: {
     load() {
       axios
-        .get("http://" + window.location.hostname + ":" + window.location.port + "/api/playback")
-        //.get("http://10.0.0.21:8080/api/playback")
+        .get("http://" + this.$config.api + "/playback")
         .then(response => {
           this.items = response.data.items
         })
@@ -121,8 +120,7 @@ export default {
     },
     moveItem(pos) {
       axios
-        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos + "?position=up")
-        //.put("http://10.0.0.21:8080/api/playback/" + pos + "?position=up")
+        .put("http://" + this.$config.api + "/playback/" + pos + "?position=up")
         .then(response => {
           this.snackbar_text = "Item moved."
           this.snackbar = true
@@ -133,8 +131,7 @@ export default {
     },
     prioritizeItem(pos) {
       axios
-        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos + "?position=next")
-        //.put("http://10.0.0.21:8080/api/playback/" + pos + "?position=next")
+        .put("http://" + this.$config.api + "/playback/" + pos + "?position=next")
         .then(response => {
           this.snackbar_text = "Item moved next."
           this.snackbar = true
@@ -149,8 +146,7 @@ export default {
         loop_txt = "false"
       }
       axios
-        .put("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos + "?loop=" + loop_txt)
-        //.put("http://10.0.0.21:8080/api/playback/" + pos + "?loop=" + loop_txt)
+        .put("http://" + this.$config.api + "/playback/" + pos + "?loop=" + loop_txt)
         .then(response => {
           this.snackbar_text = "Item looped."
           if (!is_looped) {
@@ -164,8 +160,7 @@ export default {
     },
     deleteItem(pos) {
       axios
-        .delete("http://" + window.location.hostname + ":" + window.location.port + "/api/playback/" + pos)
-        //.delete("http://10.0.0.21:8080/api/playback/" + pos)
+        .delete("http://" + this.$config.api + "/playback/" + pos)
         .then(response => {
           this.snackbar_text = "Item deleted."
           this.snackbar = true
@@ -175,12 +170,9 @@ export default {
         })
     }
   },
-  mounted() {
+  created() {
     this.load()
     this.interval = setInterval(this.load, 5000)
-  },
-  beforeUnmount() {
-    clearInterval(this.interval)
   },
   destroyed() {
     clearInterval(this.interval)
@@ -190,6 +182,14 @@ export default {
 
 <style>
   .table-action-cell {
-    max-width: 45px !important;
+    max-width: 100px !important;
+    width: 100px !important;
+  }
+  .table-check-cell {
+    max-width: 70px !important;
+    width: 70px !important;
+  }
+  .table-check-cell i {
+    font-size: 20px !important;
   }
 </style>

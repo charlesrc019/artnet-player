@@ -15,7 +15,7 @@ class StatusHandler(tornado.websocket.WebSocketHandler):
         self.ola = ola
         self.clients = set()
         self.free_sent = True
-        tornado.ioloop.PeriodicCallback(self.status_updater, 1000).start()
+        tornado.ioloop.PeriodicCallback(self.status_updater, 500).start()
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -103,7 +103,7 @@ class RecordHandler(tornado.web.RequestHandler):
 
             # As far as we can tell, things will go pechy when we try to record so safe to add entry.
             timestamp = f"{datetime.datetime.now():%Y-%m-%d %H:%m:%S}"
-            name = f"New Recording {timestamp}"
+            name = f"{timestamp}"
             curs.execute(
                 """
                     insert into RECORDING

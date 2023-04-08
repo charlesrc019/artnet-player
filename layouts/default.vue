@@ -27,7 +27,9 @@
       fixed
       app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+        <v-icon>menu</v-icon>
+      </v-app-bar-nav-icon>
       <v-toolbar-title v-text="title" />
       <v-spacer />
     </v-app-bar>
@@ -40,14 +42,15 @@
       dark
       padless
       v-if="footer_visible"
+      style='z-index:10;'
     >
       <v-card
-        color="secondary"
-        class="flex"
+        color="accent"
+        class="flex px-4 pt-2 pb-8"
         flat
         tile
       >
-        <v-card-title class="px-8 pt-6 pb-0">
+        <v-card-title class="pb-0">
           <strong v-text="footer_title"></strong>
           <v-spacer></v-spacer>
           <v-btn
@@ -55,14 +58,16 @@
             icon
             @click="stopPlayback()"
           >
-            <v-icon size="24px">mdi-stop</v-icon>
+            <v-icon color="red" size="30px">stop</v-icon>
           </v-btn>
         </v-card-title>
 
-        <v-card-text class="px-8 pt-2 pb-7 white--text text-left">
-          {{ footer_row1 }} <br />
-          {{ footer_row2 }}
+        <v-card-text class="pt-1 mb-1 white--text text-left">
+          Sequence: {{ footer_row1 }} <br />
+          Time: {{ footer_row2 }}
         </v-card-text>
+
+        <div class="expanding-div"></div>
 
       </v-card>
     </v-footer>
@@ -82,17 +87,17 @@ export default {
       footer_row2: "",
       items: [
         {
-          icon: 'mdi-playlist-play',
+          icon: 'view_list',
           title: 'Queue',
           to: '/'
         },
         {
-          icon: 'mdi-filmstrip-box-multiple',
+          icon: 'local_movies',
           title: 'Library',
           to: '/library'
         },
         {
-          icon: 'mdi-cog',
+          icon: 'settings',
           title: 'Configurations',
           to: '/configurations'
         }
@@ -105,8 +110,7 @@ export default {
   methods: {
     stopPlayback() {
       axios
-        .post("http://" + window.location.hostname + ":" + window.location.port + "/api/stop")
-        //.post("http://10.0.0.21:8080/api/stop")
+        .post("http://" + this.$config.api + "/stop")
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -114,8 +118,7 @@ export default {
     }
   },
   mounted() {
-    let socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/api/status")
-    //let socket = new WebSocket("ws://10.0.0.21:8080/api/status")
+    let socket = new WebSocket("ws://" + this.$config.api + "/status")
     socket.onopen = (event) => {}
     socket.onmessage = (event) => {
       this.activity = JSON.parse(event.data)
@@ -145,3 +148,19 @@ export default {
   }
 }
 </script>
+
+<style>
+:root {
+  background: #181a1b;
+}
+.expanding-div {
+  display: none;
+}
+@media screen and (max-width: 767px) {
+    _::-webkit-full-page-media, _:future, .expanding-div .safari_only {
+      display: block !important;
+      height: 65px !important;
+      max-height: 65px !important;
+    }
+}
+</style>
