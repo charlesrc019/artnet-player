@@ -83,7 +83,7 @@ export default {
 
   // Global Variables
   publicRuntimeConfig: {
-    //api: window.location.hostname + ":" + window.location.port + "/api"
-    api: "10.0.0.11:8080/api"
+    dev_endpoint: "" // prod
+    //dev_endpoint: "10.0.0.11:8080/api"
   }
 }

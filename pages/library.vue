@@ -120,6 +120,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      api: window.location.hostname + ":" + window.location.port + "/api",
       search: "",
       headers: [
         {
@@ -163,7 +164,7 @@ export default {
   methods: {
     load() {
       axios
-        .get("http://" + this.$config.api + "/recordings")
+        .get("http://" + this.api + "/recordings")
         .then(response => {
           this.recordings = response.data
         })
@@ -178,7 +179,7 @@ export default {
     },
     playRecording(item) {
       axios
-        .post("http://" + this.$config.api + "/playback?when=now&id=" + item.identifier)
+        .post("http://" + this.api + "/playback?when=now&id=" + item.identifier)
         .then(response => {})
         .catch(error => {
           console.log(error)
@@ -186,7 +187,7 @@ export default {
     },
     insertRecording(item) {
       axios
-        .post("http://" + this.$config.api + "/playback?when=next&id=" + item.identifier)
+        .post("http://" + this.api + "/playback?when=next&id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue next."
           this.snackbar = true
@@ -197,7 +198,7 @@ export default {
     },
     addRecording(item) {
       axios
-        .post("http://" + this.$config.api + "/playback?id=" + item.identifier)
+        .post("http://" + this.api + "/playback?id=" + item.identifier)
         .then(response => {
           this.snackbar_text = "Added to queue."
           this.snackbar = true
@@ -208,7 +209,7 @@ export default {
     },
     editRecording() {
       axios
-        .put("http://" + this.$config.api + "/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
+        .put("http://" + this.api + "/recordings/" + this.dialog_id + "?name=" + encodeURIComponent(this.dialog_text))
         .then(response => {
           this.dialog = false
           this.snackbar_text = "Recording edited."
@@ -222,7 +223,7 @@ export default {
     deleteRecording(item) {
       if (confirm("This recording will be permanently deleted.\nContinue?")) {
         axios
-          .delete("http://" + this.$config.api + "/recordings/" + item.identifier)
+          .delete("http://" + this.api + "/recordings/" + item.identifier)
           .then(response => {
             this.snackbar_text = "Recording deleted."
             this.snackbar = true
@@ -235,6 +236,9 @@ export default {
     }
   },
   created() {
+    if (this.$config.dev_endpoint !== "") {
+      this.api = this.$config.dev_endpoint
+    }
     this.load()
   }
 }

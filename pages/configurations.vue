@@ -127,6 +127,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      api: window.location.hostname + ":" + window.location.port + "/api",
       selected: null,
       dialog: false,
       dialog_text: "",
@@ -142,7 +143,7 @@ export default {
   methods: {
     load() {
       axios
-        .get("http://" + this.$config.api + "/configurations")
+        .get("http://" + this.api + "/configurations")
         .then(response => {
           this.configurations = response.data
         })
@@ -152,7 +153,7 @@ export default {
     },
     recordPlayback() {
       axios
-        .post("http://" + this.$config.api + "/record?id=" + this.selected)
+        .post("http://" + this.api + "/record?id=" + this.selected)
         .then(response => {})
         .catch(error => {
           console.log(error.response)
@@ -162,7 +163,7 @@ export default {
     },
     addConfiguration() {
       axios
-        .post("http://" + this.$config.api + "/configurations?name=" + this.dialog_text)
+        .post("http://" + this.api + "/configurations?name=" + this.dialog_text)
         .then(response => {
           this.dialog = false
           this.snackbar = true
@@ -176,7 +177,7 @@ export default {
     deleteConfiguration() {
       if (confirm("All associated recordings will be permanently deleted.\nContinue?")) {
         axios
-          .delete("http://" + this.$config.api + "/configurations/" + this.selected)
+          .delete("http://" + this.api + "/configurations/" + this.selected)
           .then(response => {
             this.snackbar = true
             this.snackbar_text = "Configuration deleted."
@@ -189,6 +190,9 @@ export default {
     }
   },
   created() {
+    if (this.$config.dev_endpoint !== "") {
+      this.api = this.$config.dev_endpoint
+    }
     this.load()
   }
 }

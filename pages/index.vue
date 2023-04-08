@@ -101,6 +101,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      api: window.location.hostname + ":" + window.location.port + "/api",
       items: [],
       interval: "",
       snackbar: false,
@@ -110,7 +111,7 @@ export default {
   methods: {
     load() {
       axios
-        .get("http://" + this.$config.api + "/playback")
+        .get("http://" + this.api + "/playback")
         .then(response => {
           this.items = response.data.items
         })
@@ -120,7 +121,7 @@ export default {
     },
     moveItem(pos) {
       axios
-        .put("http://" + this.$config.api + "/playback/" + pos + "?position=up")
+        .put("http://" + this.api + "/playback/" + pos + "?position=up")
         .then(response => {
           this.snackbar_text = "Item moved."
           this.snackbar = true
@@ -131,7 +132,7 @@ export default {
     },
     prioritizeItem(pos) {
       axios
-        .put("http://" + this.$config.api + "/playback/" + pos + "?position=next")
+        .put("http://" + this.api + "/playback/" + pos + "?position=next")
         .then(response => {
           this.snackbar_text = "Item moved next."
           this.snackbar = true
@@ -146,7 +147,7 @@ export default {
         loop_txt = "false"
       }
       axios
-        .put("http://" + this.$config.api + "/playback/" + pos + "?loop=" + loop_txt)
+        .put("http://" + this.api + "/playback/" + pos + "?loop=" + loop_txt)
         .then(response => {
           this.snackbar_text = "Item looped."
           if (!is_looped) {
@@ -160,7 +161,7 @@ export default {
     },
     deleteItem(pos) {
       axios
-        .delete("http://" + this.$config.api + "/playback/" + pos)
+        .delete("http://" + this.api + "/playback/" + pos)
         .then(response => {
           this.snackbar_text = "Item deleted."
           this.snackbar = true
@@ -171,6 +172,9 @@ export default {
     }
   },
   created() {
+    if (this.$config.dev_endpoint !== "") {
+      this.api = this.$config.dev_endpoint
+    }
     this.load()
     this.interval = setInterval(this.load, 5000)
   },

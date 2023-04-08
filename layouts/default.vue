@@ -79,6 +79,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      api: window.location.hostname + ":" + window.location.port + "/api",
       title: 'ArtNet Player',
       drawer: false,
       footer_visible: false,
@@ -110,15 +111,18 @@ export default {
   methods: {
     stopPlayback() {
       axios
-        .post("http://" + this.$config.api + "/stop")
+        .post("http://" + this.api + "/stop")
         .then(response => {})
         .catch(error => {
           console.log(error)
         })
     }
   },
-  mounted() {
-    let socket = new WebSocket("ws://" + this.$config.api + "/status")
+  created() {
+    if (this.$config.dev_endpoint !== "") {
+      this.api = this.$config.dev_endpoint
+    }
+    let socket = new WebSocket("ws://" + this.api + "/status")
     socket.onopen = (event) => {}
     socket.onmessage = (event) => {
       this.activity = JSON.parse(event.data)
