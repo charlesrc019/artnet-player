@@ -278,6 +278,9 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
 
 class PlaybackStandbyHandler(tornado.web.RequestHandler):
 
+    def initialize(self, ola, queue):
+        self.queue = queue
+
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Methods", "*")
@@ -352,6 +355,7 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
             curs.execute("update RECORDING set IS_STANDBY = 0;")
             if str(idenitifier) != "none":
                 curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", (idenitifier,))
+                self.queue.watchdog_active = True
             conn.commit()
             conn.close()
 

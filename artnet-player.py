@@ -72,7 +72,7 @@ def main():
             (r'/api/configurations', ConfigListHandler),
             (r'/api/recordings/(.*)', RecordingDetailsHandler, {"queue": queue}),
             (r'/api/recordings', RecordingListHandler),
-            (r'/api/playback/standby', PlaybackStandbyHandler),
+            (r'/api/playback/standby', PlaybackStandbyHandler, {"queue": queue}),
             (r'/api/playback/(.*)', PlaybackDetailsHandler, {"ola": ola, "queue": queue}),
             (r'/api/playback', PlaybackListHandler, {"ola": ola, "queue": queue}),
             (r'/api/record', RecordHandler, {"ola": ola}),
