@@ -191,7 +191,6 @@ export default {
       axios
         .get("http://" + this.api + "/playback/standby")
         .then(response => {
-          console.log(response.data)
           this.sequences = response.data.sequences
           this.standby = response.data.standby
         })
