@@ -12,7 +12,6 @@ import traceback
 class OLA:
 
     def __init__(self):
-        self.STALE_PATCH_THRESHOLD = 300 #secs
         self.__executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
         self.active_task = None
         self.active_epoch = None
@@ -23,6 +22,9 @@ class OLA:
         self.is_output = None
         self.last_patch = 0
         self.__patch_output()
+        self.STALE_PATCH_THRESHOLD = 300 #secs
+
+        tornado.ioloop.PeriodicCallback(self.offline_restart, 15 * 60 * 1000).start() # restart OLA service periodically
 
     def status(self):
         if self.__executor._work_queue.qsize() == 0:

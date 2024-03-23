@@ -63,7 +63,6 @@ def main():
     # Begin resource instances.
     ola = OLA()
     queue = Queue(ola)
-    tornado.ioloop.PeriodicCallback(ola.offline_restart, 30 * 60 * 1000).start() # restart OLA service periodically
 
     # Define routes and behaviors.
     application = tornado.web.Application(

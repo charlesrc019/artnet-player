@@ -47,17 +47,17 @@
                 </v-checkbox>
               </td>
               <td class="text-center table-action-cell">
-                <v-icon
+                <!--<v-icon
                   small
                   class="mr-1"
                   @click="prioritizeItem(item.position)"
                   v-if="(item.position <= 1) ? false : true"
                 >
                   keyboard_arrow_up
-                </v-icon>
+                </v-icon>-->
                 <v-icon
                   small
-                  class="mr-1"
+                  class="mr-5"
                   @click="moveItem(item.position)"
                   v-if="(item.position <= 1) ? false : true"
                 >
@@ -65,7 +65,6 @@
                 </v-icon>
                 <v-icon
                   small
-                  class="mr-1"
                   @click="deleteItem(item.position)"
                   v-if="(item.position === 0) ? false : true"
                 >
@@ -219,12 +218,12 @@ export default {
     }
     this.loadItems()
     this.loadStandby()
-    this.interval = setInterval(this.load, 500)
     window.addEventListener("focus", this.reloadPage)
+    this.interval = setInterval(this.loadItems, 500)
   },
   destroyed() {
-    clearInterval(this.interval)
     window.removeEventListener("focus", this.reloadPage)
+    clearInterval(this.interval)
   }
 }
 </script>
