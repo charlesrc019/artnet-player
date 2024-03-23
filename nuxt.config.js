@@ -77,8 +77,8 @@ export default {
   },
 
   server: {
-    host: '0',
-    port: 8080 // default: 3000
+    host: '',
+    port: 8888 // default: 3000
   },
 
   // Global Variables

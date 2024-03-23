@@ -40,10 +40,6 @@ tornado.options.parse_command_line()
 # Initialize IO loop.
 def main():
 
-    # Register the signal handler
-    signal.signal(signal.SIGTERM, sig_handler)
-    signal.signal(signal.SIGINT, sig_handler)
-
     # Configure logging.
     tornado.log.enable_pretty_logging()
 
@@ -98,17 +94,6 @@ def main():
     logging.info(f"Starting server on {tornado.options.options.port}...")
     tornado.ioloop.IOLoop.current().start()
     logging.info("Server shutting down...")
-
-def sig_handler(sig, frame):
-    io_loop = tornado.ioloop.IOLoop.instance()
-    if io_loop.current()._thread_identity == threading.get_ident():
-        io_loop.add_callback_from_signal(stop_tornado)
-    else:
-        sys.exit()
-
-def stop_tornado():
-    io_loop = tornado.ioloop.IOLoop.instance()
-    io_loop.stop()
 
 # Main.
 if __name__ == "__main__":
