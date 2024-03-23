@@ -7,6 +7,7 @@ import datetime
 import concurrent
 import time
 import os
+import traceback
 
 class Queue:
 
@@ -109,6 +110,7 @@ class Queue:
 
                     curs.close()
                 except Exception as e:
+                    traceback.print_exc()
                     raise Exception("Internal database error.")
 
                 rec_name = tmp[0]
