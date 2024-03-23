@@ -117,6 +117,6 @@ class OLA:
                 self.restart_pending = False
                 break
             else:
-                tornado.gen.sleep(1)
+                tornado.gen.sleep(0.5)
 
 

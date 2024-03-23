@@ -34,7 +34,7 @@ class Queue:
             curs.close()
         except Exception as e:
             raise Exception("Unable to initialize queue.")
-        tornado.ioloop.PeriodicCallback(self.watchdog, 500).start()
+        tornado.ioloop.PeriodicCallback(self.watchdog, 1000).start()
 
     def watchdog(self):
         if self.watchdog_active:
