@@ -11,5 +11,6 @@ create table RECORDING (
     CONFIGURATION_ID integer not null,
     SECONDS integer not null,
     IN_PROGRESS integer not null,
+    IS_STANDBY integer not null,
     CREATED text not null
 );
