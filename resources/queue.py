@@ -63,9 +63,9 @@ class Queue:
 
                             # Look for standby.
                             try:
-                                conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
-                                curs = conn.cursor()
-                                curs.execute(
+                                recs_conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
+                                recs_curs = recs_conn.cursor()
+                                recs_curs.execute(
                                     """
                                         select
                                             RECORDING.NAME,
@@ -78,8 +78,8 @@ class Queue:
                                         where RECORDING.IS_STANDBY = 1;
                                     """
                                 )
-                                tmp = curs.fetchone()
-                                conn.close()
+                                tmp = recs_curs.fetchone()
+                                recs_conn.close()
                             except Exception as e:
                                 traceback.print_exc()
                                 raise tornado.web.HTTPError(500, f"Internal database error.")
