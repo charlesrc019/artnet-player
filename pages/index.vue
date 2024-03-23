@@ -83,8 +83,9 @@
         <v-spacer></v-spacer>
         <v-select
           :items="sequences"
-          item-title="name"
-          item-value="identifier"
+          v-model="standby"
+          item-text="name"
+          item-value="idenitifier"
           label="Sequence"
           single-line
         ></v-select>
@@ -119,7 +120,8 @@ export default {
       interval: "",
       snackbar: false,
       snackbar_text: "",
-      sequences: []
+      sequences: [],
+      standby: ""
     }
   },
   methods: {

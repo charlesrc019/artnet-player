@@ -313,13 +313,13 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
 
         # Organize response.
         resp = {
-            "standby": None,
+            "standby": "",
             "sequences": []
         }
         for sequence in sequences:
             tmp = {
-                "title": sequence[0],
-                "value": sequence[1]
+                "name": sequence[0],
+                "idenitifier": sequence[1]
             }
             resp["sequences"].append(tmp)
             if int(sequence[2]) == 1:
