@@ -87,6 +87,7 @@
           item-text="name"
           item-value="idenitifier"
           label="Sequence"
+          @change="putStandby"
           single-line
         ></v-select>
       </v-card-title>
@@ -125,23 +126,11 @@ export default {
     }
   },
   methods: {
-    load() {
+    loadItems() {
       axios
         .get("http://" + this.api + "/playback")
         .then(response => {
           this.items = response.data.items
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-    load_standby() {
-      axios
-        .get("http://" + this.api + "/playback/standby")
-        .then(response => {
-          console.log(response.data)
-          this.sequences = response.data.sequences
-          this.standby = response.data.standby
         })
         .catch(error => {
           console.log(error)
@@ -197,14 +186,37 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    loadStandby() {
+      axios
+        .get("http://" + this.api + "/playback/standby")
+        .then(response => {
+          console.log(response.data)
+          this.sequences = response.data.sequences
+          this.standby = response.data.standby
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    putStandby() {
+      axios
+      .put("http://" + this.api + "/playback/standby?id=" + this.standby)
+      .then(response => {
+        this.snackbar_text = "New standby designated."
+        this.snackbar = true
+      })
+      .catch(error => {
+        console.log(error)
+      })
     }
   },
   created() {
     if (this.$config.dev_endpoint !== "") {
       this.api = this.$config.dev_endpoint
     }
-    this.load()
-    this.load_standby()
+    this.loadItems()
+    this.loadStandby()
     this.interval = setInterval(this.load, 500)
   },
   destroyed() {

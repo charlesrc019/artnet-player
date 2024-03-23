@@ -345,7 +345,7 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
 
             # Return all sequences.
             curs.execute("update RECORDING set IS_STANDBY = 0;")
-            curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", idenitifier)
+            curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", (idenitifier,))
             conn.close()
 
         except Exception as e:
