@@ -278,7 +278,7 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
 
 class PlaybackStandbyHandler(tornado.web.RequestHandler):
 
-    def initialize(self, ola, queue):
+    def initialize(self, queue):
         self.queue = queue
 
     def set_default_headers(self):
