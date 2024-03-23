@@ -314,7 +314,12 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
         # Organize response.
         resp = {
             "standby": "",
-            "sequences": []
+            "sequences": [
+                {
+                    "name": "None",
+                    "idenitifier": "none"
+                }
+            ]
         }
         for sequence in sequences:
             tmp = {
@@ -345,7 +350,9 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
 
             # Return all sequences.
             curs.execute("update RECORDING set IS_STANDBY = 0;")
-            curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", (idenitifier,))
+            if str(idenitifier) != "none":
+                curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", (idenitifier,))
+            conn.commit()
             conn.close()
 
         except Exception as e:

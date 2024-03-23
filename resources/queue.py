@@ -33,7 +33,7 @@ class Queue:
             curs.close()
         except Exception as e:
             raise Exception("Unable to initialize queue.")
-        tornado.ioloop.PeriodicCallback(self.watchdog, 100).start()
+        tornado.ioloop.PeriodicCallback(self.watchdog, 500).start()
 
     def watchdog(self):
         if self.watchdog_active:
@@ -56,17 +56,50 @@ class Queue:
                         curs.execute("delete from QUEUE where POSITION = 0;")
                         curs.execute("select count(*) from QUEUE;")
                         tmp = curs.fetchone()
-                        if (tmp is None) or (int(tmp[0]) == 0): # special case to turn off watchdog if empty
-                            self.watchdog_active = False
-                            return
-                        #curs.execute("select * from QUEUE;")
 
-                        while (True):
-                            curs.execute("update QUEUE set POSITION = POSITION - 1;")
-                            curs.execute("select NAME, UUID, CONFIGURATION_NAME, SECONDS from QUEUE where POSITION = 0;")
-                            tmp = curs.fetchone()
+                        # Process if queue is empty.
+                        if (tmp is None) or (int(tmp[0]) == 0): 
+
+                            # Look for standby.
+                            try:
+                                conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
+                                curs = conn.cursor()
+                                curs.execute(
+                                    """
+                                        select
+                                            RECORDING.NAME,
+                                            RECORDING.UUID,
+                                            CONFIGURATION.NAME,
+                                            RECORDING.SECONDS
+                                        from RECORDING
+                                        join CONFIGURATION 
+                                            on RECORDING.CONFIGURATION_ID = CONFIGURATION.ID 
+                                        where RECORDING.IS_STANDBY = 1;
+                                    """
+                                )
+                                tmp = curs.fetchone()
+                                conn.close()
+                            except Exception as e:
+                                traceback.print_exc()
+                                raise tornado.web.HTTPError(500, f"Internal database error.")
+
+                            # We found a standby.
                             if tmp is not None:
-                                break
+                                tmp[0] = tmp[0] + " (Standby)"
+                            
+                            # Turn off watchdog if empty.
+                            else
+                                self.watchdog_active = False 
+                                return
+
+                        # Process next song if not empty.
+                        else:
+                            while (True):
+                                curs.execute("update QUEUE set POSITION = POSITION - 1;")
+                                curs.execute("select NAME, UUID, CONFIGURATION_NAME, SECONDS from QUEUE where POSITION = 0;")
+                                tmp = curs.fetchone()
+                                if tmp is not None:
+                                    break
 
                     # Loop if enabled.
                     else:
