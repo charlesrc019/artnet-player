@@ -59,7 +59,7 @@ export default {
       dark: true,
       themes: {
         dark: {
-          primary: '#17c671',
+          primary: '#e60100',
           //accent: colors.amber.darken3,
           accent: '#000',
           secondary: colors.grey.darken3,
@@ -83,7 +83,7 @@ export default {
 
   // Global Variables
   publicRuntimeConfig: {
-    dev_endpoint: "" // prod
-    //dev_endpoint: "10.0.0.11:8080/api"
+    //dev_endpoint: "" // prod
+    dev_endpoint: "192.168.0.197:8080/api"
   }
 }

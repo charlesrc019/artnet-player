@@ -17,9 +17,12 @@ to allow me to record and playback the DMX instructions like it is audio.
 
 ## Instructions
 This repository in pretty much plug-n-play. Just make sure you have the 
-dependencies installed, and you should be good to go. One note is that, 
-by default, the saved shows are stored in the data/ directory with a 
-metadata SQLite database to keep track of everything.
+dependencies installed, and you should be good to go. 
+
+On the initial run, the data/ directory is created with a 
+metadata SQLite database to keep track of everything. This directory and 
+everything in it need to be writeable by whatever user is running the player,
+or you will not be able to modify anything.
 
 ## Options
 - **port**: Adjust what port the server is listening on.

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card flat>
+    <v-card class="mb-6" flat>
       <v-card-title class="pl-6">
         Queue
       </v-card-title>
@@ -77,6 +77,19 @@
         </template>
       </v-simple-table>
     </v-card>
+    <v-card flat>
+      <v-card-title class="pl-6">
+        Standby
+        <v-spacer></v-spacer>
+        <v-select
+          :items="items"
+          item-title="name"
+          item-value="identifier"
+          label="Sequence"
+          single-line
+        ></v-select>
+      </v-card-title>
+    </v-card>
     <v-snackbar
       v-model="snackbar"
       :timeout=1000
@@ -106,6 +119,7 @@ export default {
       interval: "",
       snackbar: false,
       snackbar_text: "",
+      sequences: []
     }
   },
   methods: {
@@ -114,6 +128,17 @@ export default {
         .get("http://" + this.api + "/playback")
         .then(response => {
           this.items = response.data.items
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    load_standby() {
+      axios
+        .get("http://" + this.api + "/playback/standby")
+        .then(response => {
+          this.sequences = response.data.sequences
+          this.standby = response.data.standby
         })
         .catch(error => {
           console.log(error)
@@ -176,7 +201,8 @@ export default {
       this.api = this.$config.dev_endpoint
     }
     this.load()
-    this.interval = setInterval(this.load, 5000)
+    this.load_standby()
+    this.interval = setInterval(this.load, 500)
   },
   destroyed() {
     clearInterval(this.interval)

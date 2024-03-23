@@ -90,7 +90,7 @@ class ConfigListHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+            raise tornado.web.HTTPError(500, str(e)) #"Internal database error.")
 
         # Add new recording dir, if not exists.
         try:
@@ -99,7 +99,7 @@ class ConfigListHandler(tornado.web.RequestHandler):
         except:
             raise tornado.web.HTTPError(500, "Internal recording error.")
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()
 
 class ConfigDetailsHandler(tornado.web.RequestHandler):
@@ -164,5 +164,5 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             print(str(e))
             raise tornado.web.HTTPError(500, "Internal database error.")
             
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()

@@ -107,8 +107,8 @@ class RecordHandler(tornado.web.RequestHandler):
             curs.execute(
                 """
                     insert into RECORDING
-                        (UUID, CONFIGURATION_ID, NAME, SECONDS, IN_PROGRESS, CREATED)
-                    values (?, ?, ?, ?, 1, ?);
+                        (UUID, CONFIGURATION_ID, NAME, SECONDS, IN_PROGRESS, IS_STANDBY, CREATED)
+                    values (?, ?, ?, ?, 1, 0, ?);
                 """,
                 (idenitifier, tmp[0], name, time.time(), timestamp)
             )
@@ -129,7 +129,7 @@ class RecordHandler(tornado.web.RequestHandler):
         }
         self.ola.record(details)
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()
 
 class StopHandler(tornado.web.RequestHandler):
@@ -204,5 +204,5 @@ class StopHandler(tornado.web.RequestHandler):
             if not is_valid:
                 raise tornado.web.HTTPError(500, "No data recorded.")
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()

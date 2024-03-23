@@ -140,7 +140,7 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()
 
     async def delete(self, identifier):
@@ -187,5 +187,5 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()

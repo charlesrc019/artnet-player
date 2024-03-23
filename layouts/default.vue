@@ -27,7 +27,10 @@
       fixed
       app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+      <v-app-bar-nav-icon 
+        @click.stop="drawer = !drawer" 
+        :disabled="!drawer_changeable"
+      >
         <v-icon>menu</v-icon>
       </v-app-bar-nav-icon>
       <v-toolbar-title v-text="title" />
@@ -35,42 +38,35 @@
     </v-app-bar>
     <v-main>
       <v-container class="py-6">
+        <v-card
+          color="accent"
+          class="flex mx-3 mb-2 px-4 py-2"
+          flat
+          tile
+        >
+          <v-card-title class="pb-0">
+            <strong v-text="footer_title"></strong>
+            <v-spacer></v-spacer>
+            <v-btn
+              dark
+              icon
+              @click="stopPlayback()"
+            >
+              <v-icon color="red" size="30px" v-show="footer_visible">stop</v-icon>
+            </v-btn>
+          </v-card-title>
+
+          <v-card-text class="mb-1 white--text text-left">
+            {{ footer_row1 }} <br />
+            {{ footer_row2 }}
+          </v-card-text>
+
+          <div class="expanding-div"></div>
+
+        </v-card>
         <Nuxt />
       </v-container>
     </v-main>
-    <v-footer
-      dark
-      padless
-      v-if="footer_visible"
-      style='z-index:10;'
-    >
-      <v-card
-        color="accent"
-        class="flex px-4 pt-2 pb-8"
-        flat
-        tile
-      >
-        <v-card-title class="pb-0">
-          <strong v-text="footer_title"></strong>
-          <v-spacer></v-spacer>
-          <v-btn
-            dark
-            icon
-            @click="stopPlayback()"
-          >
-            <v-icon color="red" size="30px">stop</v-icon>
-          </v-btn>
-        </v-card-title>
-
-        <v-card-text class="pt-1 mb-1 white--text text-left">
-          Sequence: {{ footer_row1 }} <br />
-          Time: {{ footer_row2 }}
-        </v-card-text>
-
-        <div class="expanding-div"></div>
-
-      </v-card>
-    </v-footer>
   </v-app>
 </template>
 
@@ -82,6 +78,7 @@ export default {
       api: window.location.hostname + ":" + window.location.port + "/api",
       title: 'ArtNet Player',
       drawer: false,
+      drawer_changeable: true,
       footer_visible: false,
       footer_title: "",
       footer_row1: "",
@@ -99,8 +96,8 @@ export default {
         },
         {
           icon: 'settings',
-          title: 'Configurations',
-          to: '/configurations'
+          title: 'Configuration',
+          to: '/configuration'
         }
       ],
       activity: {
@@ -122,6 +119,26 @@ export default {
     if (this.$config.dev_endpoint !== "") {
       this.api = this.$config.dev_endpoint
     }
+
+    // Disable drawer.
+    if (window.innerWidth >= 1264) {
+      this.drawer_changeable = false
+      this.drawer = true
+    }
+    else {
+      this.drawer_changeable = true
+    }
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 1264) {
+        this.drawer_changeable = false
+        this.drawer = true
+      }
+      else {
+        this.drawer_changeable = true
+      }
+    })
+    
+    // Manage status card.
     let socket = new WebSocket("ws://" + this.api + "/status")
     socket.onopen = (event) => {}
     socket.onmessage = (event) => {
@@ -131,11 +148,13 @@ export default {
         this.footer_title = this.activity.status.charAt(0).toUpperCase() + this.activity.status.slice(1) + "..."
         this.footer_row1 = this.activity.details.name
         this.footer_row2 = 
+          "Sequence: " +
           String(Math.floor(this.activity.elasped_secs / 60)) + 
           ":" + 
           (this.activity.elasped_secs - (Math.floor(this.activity.elasped_secs / 60) * 60)).toLocaleString('en-US', {minimumIntegerDigits: 2})
         if (this.activity.status == "playing") {
           this.footer_row2 = 
+            "Time: " +
             String(Math.floor(this.activity.elasped_secs / 60)) + 
             ":" + 
             (this.activity.elasped_secs - (Math.floor(this.activity.elasped_secs / 60) * 60)).toLocaleString('en-US', {minimumIntegerDigits: 2}) +
@@ -146,6 +165,9 @@ export default {
         }
       }
       else {
+        this.footer_title = "Paused"
+        this.footer_row1 = ""
+        this.footer_row2 = ""
         this.footer_visible = false
       }
     }
@@ -155,7 +177,7 @@ export default {
 
 <style>
 :root {
-  background: #181a1b;
+  background: #000;
 }
 .expanding-div {
   display: none;

@@ -21,9 +21,10 @@
         :search="search"
         show-group-by
         hide-default-footer
+        disable-pagination
       >
         <template v-slot:item.actions="{ item }">
-          <v-icon
+          <!--<v-icon
             small
             class="mr-1"
             @click="playRecording(item)"
@@ -36,17 +37,17 @@
             @click="insertRecording(item)"
           >
             keyboard_double_arrow_right
-          </v-icon>
+          </v-icon>-->
           <v-icon
             small
-            class="mr-1"
+            class="mr-5"
             @click="addRecording(item)"
           >
             add
           </v-icon>
           <v-icon
             small
-            class="mr-1"
+            class="mr-5"
             @click="loadDialog(item)"
           >
             mode_edit
@@ -136,14 +137,14 @@ export default {
           sortable: true,
           value: "configuration"
         },
-        {
-          text: "Duration",
-          align: "start",
-          filterable: false,
-          sortable: true,
-          groupable: false,
-          value: "duration"
-        },
+        //{
+        //  text: "Duration",
+        //  align: "start",
+        //  filterable: false,
+        //  sortable: true,
+        //  groupable: false,
+        //  value: "duration"
+        //},
         {
           text: "",
           align: "center",

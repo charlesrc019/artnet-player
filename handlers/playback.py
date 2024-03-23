@@ -148,7 +148,7 @@ class PlaybackListHandler(tornado.web.RequestHandler):
 
         self.queue.watchdog_active = True
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()
 
 class PlaybackDetailsHandler(tornado.web.RequestHandler):
@@ -232,7 +232,7 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
         self.finish()
 
     async def delete(self, position):
@@ -267,5 +267,82 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
         except:
             raise tornado.web.HTTPError(500, "Internal database error.")
 
-        self.set_status(status_code=202)
+        self.set_status(status_code=200)
+        self.finish()
+
+class PlaybackStandbyHandler(tornado.web.RequestHandler):
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "*")
+
+    async def options(self, *args):
+        self.set_status(204)
+        self.finish()
+
+    async def get(self):
+
+        # Use database connection.
+        try:
+            conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
+            curs = conn.cursor()
+
+            # Return all sequences.
+            curs.execute(
+                f"""
+                    select
+                        RECORDING.NAME,
+                        RECORDING.UUID,
+                        RECORDING.IS_STANDBY
+                    from RECORDING
+                    order by RECORDING.NAME desc;
+                """,
+            )
+            sequences = curs.fetchall()
+            conn.close()
+
+        except:
+            raise tornado.web.HTTPError(500, "Internal database error.")
+
+        # Organize response.
+        resp = {
+            "standby": None,
+            "sequences": []
+        }
+        for sequence in sequences:
+            tmp = {
+                "name": sequence[0],
+                "identifier": sequence[1]
+            }
+            resp["sequences"].append(tmp)
+            if int(sequence[2]) == 1:
+                resp["standby"] = sequence[1]
+
+        self.set_header("Content-Type", "application/json; charset=UTF-8") # tornado doesn't play nice w/ json arrays
+        self.finish(json.dumps(resp))
+
+    async def put(self):
+
+        # Fetch query parameters.
+        try:
+            idenitifier = self.get_argument("id", None)
+            if idenitifier is None:
+                raise Exception()
+        except:
+            raise tornado.web.HTTPError(400, "Invalid parameters.")
+
+        # Use database connection.
+        try:
+            conn = sqlite3.connect(f"{tornado.options.options.directory}/metadata.db")
+            curs = conn.cursor()
+
+            # Return all sequences.
+            curs.execute("update RECORDING set IS_STANDBY = 0;")
+            curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", idenitifier)
+            conn.close()
+
+        except:
+            raise tornado.web.HTTPError(500, "Internal database error.")
+
+        self.set_status(status_code=200)
         self.finish()
