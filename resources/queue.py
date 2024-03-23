@@ -85,6 +85,7 @@ class Queue:
 
                             # We found a standby.
                             if tmp is not None:
+                                tmp = list(tmp)
                                 tmp[0] = tmp[0] + " (Standby)"
                             
                             # Turn off watchdog if empty.
