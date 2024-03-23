@@ -88,7 +88,7 @@ class Queue:
                                 tmp[0] = tmp[0] + " (Standby)"
                             
                             # Turn off watchdog if empty.
-                            else
+                            else:
                                 self.watchdog_active = False 
                                 return
 
