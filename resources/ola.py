@@ -75,6 +75,7 @@ class OLA:
     def stop(self):
 
         os.system(f"kill $(ps -C ola_recorder -o pid=)") # yeah... kinda janky but couldn't find better way
+        os.system(f"sleep 0")
         logging.info(f"STOP")
         
         self.active_task = None
@@ -114,6 +115,7 @@ class OLA:
             if self.active_task == "free":
                 logging.info(f"OLA RESTART")
                 os.system(f"service olad restart")
+                os.system(f"sleep 0")
                 self.restart_pending = False
                 break
             else:
