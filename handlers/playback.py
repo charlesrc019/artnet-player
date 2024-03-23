@@ -40,8 +40,8 @@ class PlaybackListHandler(tornado.web.RequestHandler):
             recordings = curs.fetchall()
             
             curs.close()
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Organize response.
         items  = []
@@ -78,7 +78,7 @@ class PlaybackListHandler(tornado.web.RequestHandler):
             when = self.get_argument("when", "")
             if (when != "") and (when != "now") and (when != "next"):
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Fetch recording details.
@@ -106,8 +106,8 @@ class PlaybackListHandler(tornado.web.RequestHandler):
             connection.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Modify queue database.
         try:
@@ -139,8 +139,8 @@ class PlaybackListHandler(tornado.web.RequestHandler):
             curs.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Play now.
         if when == "now":
@@ -188,7 +188,7 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
                 raise Exception()
             if (move == "") and (loop == ""):
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Update queue items.
@@ -229,8 +229,8 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
             curs.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         self.set_status(status_code=200)
         self.finish()
@@ -245,7 +245,7 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
         # Extract identifying information.
         try:
             position = int(position)
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         try:
@@ -264,8 +264,8 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
             curs.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         self.set_status(status_code=200)
         self.finish()
@@ -301,8 +301,8 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
             sequences = curs.fetchall()
             conn.close()
 
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Organize response.
         resp = {
@@ -328,7 +328,7 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
             idenitifier = self.get_argument("id", None)
             if idenitifier is None:
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Use database connection.
@@ -341,8 +341,8 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
             curs.execute("update RECORDING set IS_STANDBY = 1 where UUID = ?;", idenitifier)
             conn.close()
 
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         self.set_status(status_code=200)
         self.finish()

@@ -75,7 +75,7 @@ class RecordHandler(tornado.web.RequestHandler):
             pattern = re.compile(r"^[A-Za-z0-9-_]+$")
             if not pattern.match(config):
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Check that we aren't doing anything else.
@@ -98,7 +98,7 @@ class RecordHandler(tornado.web.RequestHandler):
             try:
                 if not os.path.exists(f"{tornado.options.options.directory}/{config}"):
                     os.makedirs(f"{tornado.options.options.directory}/{config}")
-            except:
+            except Exception as e:
                 raise tornado.web.HTTPError(500, "Internal recording error.")
 
             # As far as we can tell, things will go pechy when we try to record so safe to add entry.
@@ -117,8 +117,8 @@ class RecordHandler(tornado.web.RequestHandler):
             conn.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Send recording insturctions to OLA.
         details = {
@@ -160,8 +160,8 @@ class StopHandler(tornado.web.RequestHandler):
                     curs = self.queue.conn.cursor()
                     curs.execute("update QUEUE set IS_LOOPED = 0 where POSITION = 0;")
                     curs.close()
-                except:
-                    raise tornado.web.HTTPError(500, "Internal database error.")
+                except Exception as e:
+                    raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         self.ola.stop()
 
@@ -197,8 +197,8 @@ class StopHandler(tornado.web.RequestHandler):
                 conn.close()
             except tornado.web.HTTPError as e:
                 raise e
-            except:
-                raise tornado.web.HTTPError(500, "Internal database error.")
+            except Exception as e:
+                raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
             # Report error.
             if not is_valid:

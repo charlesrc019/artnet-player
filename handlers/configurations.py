@@ -38,8 +38,8 @@ class ConfigListHandler(tornado.web.RequestHandler):
 
             conn.close()
 
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Organize response.
         resp = []
@@ -61,7 +61,7 @@ class ConfigListHandler(tornado.web.RequestHandler):
             pattern = re.compile(r'^[A-Za-z0-9-_]+$')
             if not pattern.match(name):
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Use database connection.
@@ -89,14 +89,14 @@ class ConfigListHandler(tornado.web.RequestHandler):
             conn.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(500, str(e)) #"Internal database error.")
 
         # Add new recording dir, if not exists.
         try:
             if not os.path.exists(f"{tornado.options.options.directory}/{name}"):
                 os.makedirs(f"{tornado.options.options.directory}/{name}")
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(500, "Internal recording error.")
 
         self.set_status(status_code=200)
@@ -126,8 +126,8 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             curs.execute("select count(*) from QUEUE where CONFIGURATION_NAME = ?;", (config,))
             tmp = curs.fetchone()
             curs.close()
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
         if int(tmp[0]) > 0:
             raise tornado.web.HTTPError(400, "Cannot delete configuraton while used in the queue.")
 
@@ -162,7 +162,7 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             raise e
         except Exception as e:
             print(str(e))
-            raise tornado.web.HTTPError(500, "Internal database error.")
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
             
         self.set_status(status_code=200)
         self.finish()

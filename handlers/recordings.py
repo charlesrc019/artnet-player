@@ -26,7 +26,7 @@ class RecordingListHandler(tornado.web.RequestHandler):
             pattern = re.compile(r"^[A-Za-z0-9-_]+$")
             if (config != "") and (not pattern.match(config)):
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Set query parameters.
@@ -67,8 +67,8 @@ class RecordingListHandler(tornado.web.RequestHandler):
 
             conn.close()
 
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         # Organize response.
         resp = []
@@ -108,7 +108,7 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             name = self.get_argument("name", None)
             if name is None:
                 raise Exception()
-        except:
+        except Exception as e:
             raise tornado.web.HTTPError(400, "Invalid parameters.")
 
         # Use database connection.
@@ -137,8 +137,8 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             conn.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         self.set_status(status_code=200)
         self.finish()
@@ -151,8 +151,8 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             curs.execute("select * from QUEUE where UUID = ?;", (identifier,))
             tmp = curs.fetchall()
             curs.close()
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
         if (tmp is not None) and (len(tmp) > 0):
             raise tornado.web.HTTPError(400, "Cannot delete recording while it is in the queue.")
 
@@ -184,8 +184,8 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             conn.close()
         except tornado.web.HTTPError as e:
             raise e
-        except:
-            raise tornado.web.HTTPError(500, "Internal database error.")
+        except Exception as e:
+            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
 
         self.set_status(status_code=200)
         self.finish()

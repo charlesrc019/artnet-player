@@ -31,7 +31,7 @@ class Queue:
                 """.replace("    ","").replace("\n", " ")[1:]
             )
             curs.close()
-        except:
+        except Exception as e:
             raise Exception("Unable to initialize queue.")
         tornado.ioloop.PeriodicCallback(self.watchdog, 100).start()
 
@@ -74,7 +74,7 @@ class Queue:
                         tmp = curs.fetchone()
 
                     curs.close()
-                except:
+                except Exception as e:
                     raise Exception("Internal database error.")
 
                 rec_name = tmp[0]

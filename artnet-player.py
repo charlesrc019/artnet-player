@@ -56,7 +56,7 @@ def main():
                 curs.execute(sql_statement)
             conn.commit()
             conn.close()
-    except:
+    except Exception as e:
         raise Exception("Unable to access data folder.")
 
     # Begin resource instances.
