@@ -6,6 +6,7 @@ import re
 import json
 import os
 import shutil
+import traceback
 
 class RecordingListHandler(tornado.web.RequestHandler):
 
@@ -68,7 +69,8 @@ class RecordingListHandler(tornado.web.RequestHandler):
             conn.close()
 
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Organize response.
         resp = []
@@ -138,7 +140,8 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.set_status(status_code=200)
         self.finish()
@@ -152,7 +155,8 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
             tmp = curs.fetchall()
             curs.close()
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
         if (tmp is not None) and (len(tmp) > 0):
             raise tornado.web.HTTPError(400, "Cannot delete recording while it is in the queue.")
 
@@ -185,7 +189,8 @@ class RecordingDetailsHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.set_status(status_code=200)
         self.finish()

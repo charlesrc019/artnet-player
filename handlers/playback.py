@@ -4,6 +4,7 @@ import datetime
 import sqlite3
 import re
 import json
+import traceback
 
 class PlaybackListHandler(tornado.web.RequestHandler):
 
@@ -41,7 +42,8 @@ class PlaybackListHandler(tornado.web.RequestHandler):
             
             curs.close()
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Organize response.
         items  = []
@@ -107,7 +109,8 @@ class PlaybackListHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Modify queue database.
         try:
@@ -140,7 +143,8 @@ class PlaybackListHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Play now.
         if when == "now":
@@ -230,7 +234,8 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.set_status(status_code=200)
         self.finish()
@@ -265,7 +270,8 @@ class PlaybackDetailsHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.set_status(status_code=200)
         self.finish()
@@ -302,7 +308,8 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
             conn.close()
 
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Organize response.
         resp = {
@@ -342,7 +349,8 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
             conn.close()
 
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.set_status(status_code=200)
         self.finish()

@@ -8,6 +8,7 @@ import json
 import os
 import time
 import re
+import traceback
 
 class StatusHandler(tornado.websocket.WebSocketHandler):
 
@@ -118,7 +119,8 @@ class RecordHandler(tornado.web.RequestHandler):
         except tornado.web.HTTPError as e:
             raise e
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Send recording insturctions to OLA.
         details = {
@@ -161,7 +163,8 @@ class StopHandler(tornado.web.RequestHandler):
                     curs.execute("update QUEUE set IS_LOOPED = 0 where POSITION = 0;")
                     curs.close()
                 except Exception as e:
-                    raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+                    traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.ola.stop()
 
@@ -198,7 +201,8 @@ class StopHandler(tornado.web.RequestHandler):
             except tornado.web.HTTPError as e:
                 raise e
             except Exception as e:
-                raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+                traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
             # Report error.
             if not is_valid:

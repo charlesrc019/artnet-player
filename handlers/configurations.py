@@ -6,6 +6,7 @@ import re
 import json
 import os
 import shutil
+import traceback
 
 class ConfigListHandler(tornado.web.RequestHandler):
 
@@ -39,7 +40,8 @@ class ConfigListHandler(tornado.web.RequestHandler):
             conn.close()
 
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
 
         # Organize response.
         resp = []
@@ -127,7 +129,8 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             tmp = curs.fetchone()
             curs.close()
         except Exception as e:
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
         if int(tmp[0]) > 0:
             raise tornado.web.HTTPError(400, "Cannot delete configuraton while used in the queue.")
 
@@ -162,7 +165,8 @@ class ConfigDetailsHandler(tornado.web.RequestHandler):
             raise e
         except Exception as e:
             print(str(e))
-            raise tornado.web.HTTPError(500, f"Internal database error. ({str()e})")
+            traceback.print_exc()
+            raise tornado.web.HTTPError(500, f"Internal database error.")
             
         self.set_status(status_code=200)
         self.finish()
