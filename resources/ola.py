@@ -12,6 +12,7 @@ import traceback
 class OLA:
 
     def __init__(self):
+        self.STALE_PATCH_THRESHOLD = 300 #secs
         self.__executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
         self.active_task = None
         self.active_epoch = None
@@ -20,6 +21,7 @@ class OLA:
         
         # Initialize patching.
         self.is_output = None
+        self.last_patch = 0
         self.__patch_output()
 
     def status(self):
@@ -44,8 +46,7 @@ class OLA:
         if self.status()["status"] == "recording":
             raise Exception("Cannot start playback. A recording is already running.")
 
-        if not self.is_output:
-            self.__patch_output()
+        self.__patch_output()
 
         self.active_task = "playing"
         self.active_epoch = time.time()
@@ -82,25 +83,30 @@ class OLA:
         self.active_epoch = None
         self.active_details = None
 
-    def __patch_output(self):
-        #self.__executor.submit(subprocess.run, "ola_patch -d 1 -i -p 0 -u 0 --unpatch", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        #self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
-        #self.__executor.submit(subprocess.run, "ola_patch -d 1 -p 0 -u 0", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        #self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
+    def __is_stale_patch(self):
+        if (time.time() - self.last_patch) > self.STALE_PATCH_THRESHOLD:
+            return True
+        else:
+            return False
+
+    def __unpatch(self):
         os.system(f"ola_patch -d 1 -i -p 0 -u 0 --unpatch")
-        os.system(f"ola_patch -d 1 -p 0 -u 0")
-        #tornado.gen.sleep(0.1)
-        self.is_output = True
+        os.system(f"ola_patch -d 1 -p 0 -u 0 --unpatch")
+        #self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking; old method
+
+    def __patch_output(self):
+        if (not self.is_output) or (self.__is_stale_patch()):
+            self.last_patch = time.time()
+            self.__unpatch()
+            os.system(f"ola_patch -d 1 -p 0 -u 0")
+            self.is_output = True
 
     def __patch_input(self):
-        #self.__executor.submit(subprocess.run, "ola_patch -d 1 -p 0 -u 0 --unpatch", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        #self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
-        #self.__executor.submit(subprocess.run, "ola_patch -d 1 -i -p 0 -u 0", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        #self.__executor.submit(subprocess.run, "sleep 0", shell=True) # add to queue for tracking
-        os.system(f"ola_patch -d 1 -p 0 -u 0 --unpatch")
-        os.system(f"ola_patch -d 1 -i -p 0 -u 0")
-        #tornado.gen.sleep(0.1)
-        self.is_output = False
+        if (self.is_output) or (self.__is_stale_patch()):
+            self.last_patch = time.time()
+            self.__unpatch()
+            os.system(f"ola_patch -d 1 -i -p 0 -u 0")
+            self.is_output = False
 
     def offline_restart(self):
 

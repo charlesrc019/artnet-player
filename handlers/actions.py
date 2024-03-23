@@ -164,7 +164,7 @@ class StopHandler(tornado.web.RequestHandler):
                     curs.close()
                 except Exception as e:
                     traceback.print_exc()
-            raise tornado.web.HTTPError(500, f"Internal database error.")
+                    raise tornado.web.HTTPError(500, f"Internal database error.")
 
         self.ola.stop()
 
@@ -202,7 +202,7 @@ class StopHandler(tornado.web.RequestHandler):
                 raise e
             except Exception as e:
                 traceback.print_exc()
-            raise tornado.web.HTTPError(500, f"Internal database error.")
+                raise tornado.web.HTTPError(500, f"Internal database error.")
 
             # Report error.
             if not is_valid:

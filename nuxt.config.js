@@ -83,7 +83,7 @@ export default {
 
   // Global Variables
   publicRuntimeConfig: {
-    dev_endpoint: "" // prod
-    //dev_endpoint: "192.168.0.197:8080/api"
+    //dev_endpoint: "" // prod
+    dev_endpoint: "10.255.255.3:80/api"
   }
 }

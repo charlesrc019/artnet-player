@@ -208,6 +208,9 @@ export default {
       .catch(error => {
         console.log(error)
       })
+    },
+    reloadPage() {
+      window.location.reload(true);
     }
   },
   created() {
@@ -217,9 +220,11 @@ export default {
     this.loadItems()
     this.loadStandby()
     this.interval = setInterval(this.load, 500)
+    window.addEventListener("focus", this.reloadPage)
   },
   destroyed() {
     clearInterval(this.interval)
+    window.removeEventListener("focus", this.reloadPage)
   }
 }
 </script>
