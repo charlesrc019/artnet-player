@@ -318,8 +318,8 @@ class PlaybackStandbyHandler(tornado.web.RequestHandler):
         }
         for sequence in sequences:
             tmp = {
-                "name": sequence[0],
-                "identifier": sequence[1]
+                "title": sequence[0],
+                "value": sequence[1]
             }
             resp["sequences"].append(tmp)
             if int(sequence[2]) == 1:

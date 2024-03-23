@@ -82,7 +82,7 @@
         Standby
         <v-spacer></v-spacer>
         <v-select
-          :items="items"
+          :items="sequences"
           item-title="name"
           item-value="identifier"
           label="Sequence"
@@ -137,6 +137,7 @@ export default {
       axios
         .get("http://" + this.api + "/playback/standby")
         .then(response => {
+          console.log(response.data)
           this.sequences = response.data.sequences
           this.standby = response.data.standby
         })
