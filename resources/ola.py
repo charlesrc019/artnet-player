@@ -112,7 +112,7 @@ class OLA:
         # Loop until we find some free time to restart.
         while True:
             if self.active_task == "free":
-                logging.info(f"--- OLA RESTART ---")
+                logging.info(f"OLA RESTART")
                 os.system(f"service olad restart")
                 self.restart_pending = False
                 break
